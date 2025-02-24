@@ -58,7 +58,7 @@ $result = mysqli_query($conn, $query);
                                             <?php
                                             // Display status based on the value
                                             if ($row['status'] == 1) {
-                                                echo '<span class="badge badge-success">Served</span>';
+                                                echo '<span class="badge badge-success">hotdog</span>';
                                             } elseif ($row['status'] == 2) {
                                                 echo '<span class="badge badge-danger">Declined</span>';
                                             }
