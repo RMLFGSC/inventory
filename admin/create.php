@@ -51,19 +51,17 @@ if (isset($_POST['addStockin'])) {
     $cat_name = $_POST['category'];
     $dop = $_POST['dop'];
     $dr = $_POST['dr'];
-    $item_names = $_POST['equipment_id'];
-    $models = $_POST['model'];
+    $item_names = $_POST['item'];
     $qtys = $_POST['qty'];
     $warranties = isset($_POST['warranty']) ? $_POST['warranty'] : [];
 
     for ($i = 0; $i < count($item_names); $i++) {
         $item = mysqli_real_escape_string($conn, $item_names[$i]);
-        $model = mysqli_real_escape_string($conn, $models[$i]);
         $qty = intval($qtys[$i]);
         $warranty = in_array($i + 1, $warranties) ? 1 : 0; 
 
-        $query = "INSERT INTO stockin (controlNO, equipment_id, model, category, qty, dop, dr, warranty) 
-                  VALUES ('$controlNO', '$item', '$model', '$cat_name', '$qty', '$dop', '$dr', '$warranty')";
+        $query = "INSERT INTO stock_in (controlNO, item, category, qty, dop, dr, warranty) 
+                  VALUES ('$controlNO', '$item', '$cat_name', '$qty', '$dop', '$dr', '$warranty')";
         
         $query_run = mysqli_query($conn, $query);
 
@@ -85,7 +83,7 @@ if (!isset($_SESSION['auth_user']['user_id'])) {
 
 if (isset($_POST['addRequest'])) {
     // Debugging: Check if form data is received
-    if (empty($_POST['equipment_id']) || empty($_POST['qty'])) {
+    if (empty($_POST['stockin_id']) || empty($_POST['qty'])) {
         $_SESSION['message'] = "No items selected for the request.";
         header("Location: requisitions.php");
         exit();
@@ -101,7 +99,7 @@ if (isset($_POST['addRequest'])) {
     // Get the user's name and department
     $department = $user['department'];
 
-    $items = $_POST['equipment_id']; 
+    $items = $_POST['stockin_id']; 
     $qtys = $_POST['qty']; 
     $status = 0; 
     $date = date('Y-m-d'); 
@@ -111,21 +109,21 @@ if (isset($_POST['addRequest'])) {
         $item = mysqli_real_escape_string($conn, $item);
         $qty = intval($qtys[$index]);
 
-        // Check if the equipment name exists in the equipment table
-        $checkQuery = "SELECT equipment_id FROM equipment WHERE equip_name = '$item'";
+        // Check if the stockin_id exists in the stock_in table
+        $checkQuery = "SELECT stockin_id FROM stock_in WHERE item = '$item'";
         $checkResult = mysqli_query($conn, $checkQuery);
 
-        if ($equipmentRow = mysqli_fetch_assoc($checkResult)) {
+        if ($stockinRow = mysqli_fetch_assoc($checkResult)) {
             // Insert each item with the same req_number
-            $query = "INSERT INTO request (req_number, user_id, equipment_id, qty, department, date, status) 
-                      VALUES ('$req_number', '$user_id', '{$equipmentRow['equipment_id']}', '$qty', '$department', '$date', '$status')";
+            $query = "INSERT INTO request (req_number, user_id, stockin_id, qty, department, date, status) 
+                      VALUES ('$req_number', '$user_id', '{$stockinRow['stockin_id']}', '$qty', '$department', '$date', '$status')";
             
             if (!mysqli_query($conn, $query)) {
                 echo "Error: " . mysqli_error($conn);
                 exit(); 
             }
         } else {
-            echo "Error: Equipment '$item' does not exist.";
+            echo "Error: Item '$item' does not exist.";
             exit(); 
         }
     }
@@ -139,14 +137,14 @@ if (isset($_POST['addRequest'])) {
 if (isset($_POST['adduser'])) {
     $fname = mysqli_real_escape_string($conn, $_POST['fullname']);
     $pword = mysqli_real_escape_string($conn, $_POST['pword']);
-    $email = mysqli_real_escape_string($conn, $_POST['email']);
+    $uname = mysqli_real_escape_string($conn, $_POST['username']);
     $number = mysqli_real_escape_string($conn, $_POST['number']);
     $department = mysqli_real_escape_string($conn, $_POST['department']);
     $role = mysqli_real_escape_string($conn, $_POST['role']);
 
     $hashed_password = password_hash($pword, PASSWORD_DEFAULT);
 
-    $query = "INSERT INTO users (fullname, pword, email, number, department, role) VALUES ('$fname', '$hashed_password', '$email', '$number', '$department', '$role')";
+    $query = "INSERT INTO users (fullname, pword, username, number, department, role) VALUES ('$fname', '$hashed_password', '$uname', '$number', '$department', '$role')";
     $query_run = mysqli_query($conn, $query);
 
     if ($query_run) {
