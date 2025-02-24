@@ -10,18 +10,18 @@
                     <span>Dashboard</span></a>
             </li>
 
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a class="nav-link" href="equipment.php">
                     <i class="fa-solid fa-tools"></i>
                     <span>Equipment</span></a>
-            </li>
+            </li> -->
 
-            <!-- Nav Item - Pages Collapse Menu
+            <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item">
                 <a class="nav-link" href="asset.php">
                     <i class="fa-solid fa-desktop"></i>
                     <span> Fixed Asset</span></a>
-            </li> -->
+            </li>
 
             <!-- Nav Item - Utilities Collapse Menu -->
             <li class="nav-item">
@@ -64,17 +64,17 @@
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" href="issuance.php">Manage Issuance</a>
-                        <a class="collapse-item" href="isshistory.php">Issuance History</a>
+                        <a class="collapse-item" href="utilities-border.html">Issuance History</a>
                     </div>
                 </div>
             </li>
 
 
-            <!-- <li class="nav-item">
+            <li class="nav-item">
                 <a class="nav-link" href="users.php">
                     <i class="fas fa-fw fa-user"></i>
                     <span>Users</span></a>
-            </li> -->
+            </li>
 
             <li class="nav-item">
                 <a class="nav-link" href="items.php">
