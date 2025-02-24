@@ -2,13 +2,13 @@
 session_start();
 include("../dbconn/conn.php");
 
-if (isset($_POST['login-btn']) && !empty($_POST['email']) && !empty($_POST['pword'])) {
-    $email = mysqli_real_escape_string($conn, $_POST['email']);
+if (isset($_POST['login-btn']) && !empty($_POST['username']) && !empty($_POST['pword'])) {
+    $uname = mysqli_real_escape_string($conn, $_POST['username']);
     $password = mysqli_real_escape_string($conn, $_POST['pword']);
 
-    $login_query = "SELECT * FROM users WHERE email = ? LIMIT 1";
+    $login_query = "SELECT * FROM users WHERE username = ? LIMIT 1";
     $stmt = mysqli_prepare($conn, $login_query);
-    mysqli_stmt_bind_param($stmt, "s", $email);
+    mysqli_stmt_bind_param($stmt, "s", $uname);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
 
@@ -19,27 +19,27 @@ if (isset($_POST['login-btn']) && !empty($_POST['email']) && !empty($_POST['pwor
             session_regenerate_id(true); 
 
             $_SESSION['auth'] = true;
-            $_SESSION['auth_role'] = $data['role']; // 'superadmin', 'admin', 'superuser', 'user'
+            $_SESSION['auth_role'] = $data['role']; // 'admin', 'engineering', 'mmo', 'user'
             $_SESSION['auth_user'] = [
                 'user_id' => $data['user_id'],
                 'user_name' => $data['fullname'],
-                'user_email' => $data['email'],
+                'user_uname' => $data['username'],
             ];
 
             $_SESSION['message_ni'] = "Welcome " . $_SESSION['auth_user']['user_name'];
 
             switch ($_SESSION['auth_role']) {
-                case 'superadmin':
-                    header("Location: ../superadmin/index.php");
-                    break;
                 case 'admin':
                     header("Location: ../admin/index.php");
                     break;
-                case 'superuser':
-                    header("Location: ../superuser/index.php");
+                case 'mmo':
+                    header("Location: ../mmo/index.php");
+                    break;
+                case 'engineering':
+                    header("Location: ../engineering/index.php");
                     break;
                 case 'user':
-                    header("Location: ../normal_user/index.php");
+                    header("Location: ../user/index.php");
                     break;
                 default:
                     $_SESSION['message_ni'] = "Invalid user role";
@@ -49,7 +49,7 @@ if (isset($_POST['login-btn']) && !empty($_POST['email']) && !empty($_POST['pwor
             exit(0);
         }
     }
-    $_SESSION['message_ni'] = "Invalid Email or Password";
+    $_SESSION['message_ni'] = "Invalid Username or Password";
 } else {
     $_SESSION['message_ni'] = "Please fill in all fields";
 }

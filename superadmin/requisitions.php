@@ -53,15 +53,16 @@ $result = mysqli_query($conn, $query);
                                         echo $req_number; ?>" readonly>
                                     </div>
                                     <div id="itemFields">
-                                        <div class="form-row">
+                                        <div class="form-row">  
                                             <div class="form-group col-md-6">
                                                 <label>Item</label>
-                                                <select name="equipment_id[]" class="form-control" required>
+                                                <select name="stockin_id[]" class="form-control" required>
                                                     <?php
-                                                    $itemQuery = "SELECT equip_name FROM equipment";
+                                                    // Fetch items from stock_in table
+                                                    $itemQuery = "SELECT item FROM stock_in";
                                                     $itemResult = mysqli_query($conn, $itemQuery);
                                                     while ($itemRow = mysqli_fetch_assoc($itemResult)) {
-                                                        echo '<option value="' . htmlspecialchars($itemRow['equip_name']) . '">' . htmlspecialchars($itemRow['equip_name']) . '</option>';
+                                                        echo '<option value="' . htmlspecialchars($itemRow['item']) . '">' . htmlspecialchars($itemRow['item']) . '</option>';
                                                     }
                                                     ?>
                                                 </select>
@@ -226,12 +227,13 @@ $result = mysqli_query($conn, $query);
                 newItemRow.innerHTML = `
                         <div class="form-group col-md-6">
                             <label>Item</label>
-                            <select name="equipment_id[]" class="form-control" required>
+                            <select name="stockin_id[]" class="form-control" required>
                                 <?php
-                                $itemQuery = "SELECT equip_name FROM equipment";
+                                // Fetch items from stock_in table
+                                $itemQuery = "SELECT item FROM stock_in";
                                 $itemResult = mysqli_query($conn, $itemQuery);
                                 while ($itemRow = mysqli_fetch_assoc($itemResult)) {
-                                    echo '<option value="' . htmlspecialchars($itemRow['equip_name']) . '">' . htmlspecialchars($itemRow['equip_name']) . '</option>';
+                                    echo '<option value="' . htmlspecialchars($itemRow['item']) . '">' . htmlspecialchars($itemRow['item']) . '</option>';
                                 }
                                 ?>
                             </select>

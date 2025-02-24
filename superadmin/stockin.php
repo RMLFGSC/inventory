@@ -3,18 +3,15 @@ include("../includes/header.php");
 include("../includes/navbar.php");
 
 // Fetch the last control number from the database
-$lastControlNoQuery = "SELECT controlNO FROM stockin ORDER BY stockin_id DESC LIMIT 1";
+$lastControlNoQuery = "SELECT controlNO FROM stock_in ORDER BY stockin_id DESC LIMIT 1";
 $lastControlNoResult = mysqli_query($conn, $lastControlNoQuery);
 $lastControlNo = mysqli_fetch_assoc($lastControlNoResult);
-$nextControlNo = isset($lastControlNo['controlNO']) ? intval(substr($lastControlNo['controlNO'], 3)) + 1 : 1; 
+$nextControlNo = isset($lastControlNo['controlNO']) ? intval(substr($lastControlNo['controlNO'], 3)) + 1 : 1; // Increment the last number
 $controlNumber = 'CN-' . $nextControlNo; 
 
 //query
-$query = "SELECT s.*, e.equip_name FROM stockin s 
-          JOIN equipment e ON s.equipment_id = e.equipment_id 
-          WHERE s.stockin_id IN 
-          (SELECT MIN(stockin_id) FROM stockin GROUP BY controlNO) 
-          ORDER BY s.stockin_id DESC";
+$query = "SELECT * FROM stock_in WHERE stockin_id IN 
+         (SELECT MIN(stockin_id) FROM stock_in GROUP BY controlNO) ORDER BY stockin_id DESC";
 $result = mysqli_query($conn, $query);
 
 ?>
@@ -61,25 +58,13 @@ $result = mysqli_query($conn, $query);
                                 <div class="card-body">
                                     <div id="itemFields">
                                         <div class="form-row item-row mb-3">
-                                            <div class="form-group col-md-4 col-12">
+                                            <div class="form-group col-md-6 col-12">
                                                 <label>Item</label>
-                                                <select name="equipment_id[]" class="form-control" required>
-                                                    <option value="" selected disabled>Select Item</option>
-                                                    <?php
-                                                    $equipmentQuery = "SELECT equipment_id, equip_name FROM equipment";
-                                                    $equipmentResult = mysqli_query($conn, $equipmentQuery);
-                                                    while ($equipment = mysqli_fetch_assoc($equipmentResult)): ?>
-                                                        <option value="<?php echo $equipment['equipment_id']; ?>"><?php echo $equipment['equip_name']; ?></option>
-                                                    <?php endwhile; ?>
-                                                </select>
+                                                <input type="text" name="item[]" class="form-control" required>
                                             </div>
-                                            <div class="form-group col-md-4 col-12">
-                                                <label>Model</label>
-                                                <input type="text" name="model[]" class="form-control" required>
-                                            </div>
-                                            <div class="form-group col-md-4 col-12">
+                                            <div class="form-group col-md-6 col-12">
                                                 <label>Quantity</label>
-                                                <input type="number" name="qty[]" class="form-control" required;">
+                                                <input type="number" name="qty[]" class="form-control" required>
                                             </div>
                                             <div class="form-group col-md-12">
                                                 <div class="form-check">
@@ -152,7 +137,6 @@ $result = mysqli_query($conn, $query);
                                     <tr>
                                         <th>Control #</th>
                                         <th>Item</th>
-                                        <th>Model</th>
                                         <th>Quantity</th>
                                         <th>Category</th>
                                         <th>Date of Purchase</th>
@@ -183,23 +167,11 @@ $result = mysqli_query($conn, $query);
                     newItemRow.classList.add('form-row', 'item-row', 'mb-3');
 
                     newItemRow.innerHTML = `
-                        <div class="form-group col-md-4 col-12">
+                        <div class="form-group col-md-6 col-12">
                             <label>Item</label>
-                            <select name="equipment_id[]" class="form-control" required>
-                                <option value="" selected disabled>Select Item</option>
-                                <?php
-                                $equipmentQuery = "SELECT equipment_id, equip_name FROM equipment";
-                                $equipmentResult = mysqli_query($conn, $equipmentQuery);
-                                while ($equipment = mysqli_fetch_assoc($equipmentResult)): ?>
-                                    <option value="<?php echo $equipment['equipment_id']; ?>"><?php echo $equipment['equip_name']; ?></option>
-                                <?php endwhile; ?>
-                            </select>
+                            <input type="text" name="item[]" class="form-control" required>
                         </div>
-                        <div class="form-group col-md-4 col-12">
-                            <label>Model</label>
-                            <input type="text" name="model[]" class="form-control" required>
-                        </div>
-                        <div class="form-group col-md-4 col-12">
+                        <div class="form-group col-md-6 col-12">
                             <label>Quantity</label>
                             <input type="number" name="qty[]" class="form-control" required>
                         </div>
@@ -259,7 +231,6 @@ $result = mysqli_query($conn, $query);
                                 <tr>
                                     <th>Control #</th>
                                     <th>Item</th>
-                                    <th>Model</th>
                                     <th>Category</th>
                                     <th>Qty</th>
                                     <th>Date Received</th>
@@ -269,11 +240,11 @@ $result = mysqli_query($conn, $query);
 
                             <tbody>
                                 <?php
+
                                 while ($row = mysqli_fetch_assoc($result)): ?>
                                     <tr>
                                         <td><?php echo $row['controlNO']; ?></td>
-                                        <td><?php echo $row['equip_name']; ?></td>
-                                        <td><?php echo $row['model']; ?></td>
+                                        <td><?php echo $row['item']; ?></td>
                                         <td><?php echo $row['category']; ?></td>
                                         <td><?php echo $row['qty']; ?></td>
                                         <td><?php echo $row['dr']; ?></td>

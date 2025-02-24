@@ -15,14 +15,12 @@ include("../includes/navbar.php");
 
         // query
         $query = "SELECT 
-            stockin.equipment_id,   
-            equipment.equip_name,
-            stockin.category,
-            stockin.model,
-            SUM(stockin.qty) AS available_stock
-        FROM stockin 
-        JOIN equipment ON stockin.equipment_id = equipment.equipment_id
-        GROUP BY stockin.equipment_id, equipment.equip_name, stockin.category, stockin.model";
+            stock_in.stockin_id,   
+            stock_in.item,
+            stock_in.category,
+            SUM(stock_in.qty) AS available_stock
+        FROM stock_in 
+        GROUP BY stock_in.stockin_id, stock_in.item, stock_in.category";
         $result = mysqli_query($conn, $query);
         ?>
 
@@ -41,7 +39,6 @@ include("../includes/navbar.php");
                             <thead>
                                 <tr>
                                     <th>Item</th>
-                                    <th>Model</th>
                                     <th>Category</th>
                                     <th>Available Stock</th>
                                 </tr>
@@ -50,8 +47,7 @@ include("../includes/navbar.php");
                             <tbody>
                                 <?php while ($row = mysqli_fetch_assoc($result)): ?>
                                     <tr>
-                                        <td><?php echo $row['equip_name']; ?></td>
-                                        <td><?php echo $row['model']; ?></td>
+                                        <td><?php echo $row['item']; ?></td>
                                         <td><?php echo $row['category']; ?></td>
                                         <td><?php echo $row['available_stock']; ?></td>
                                     </tr>
