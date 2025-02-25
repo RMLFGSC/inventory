@@ -51,8 +51,8 @@
                 <div id="auth3" class="collapse" aria-labelledby="headingUtilities"
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="utilities-color.html">Create Issuance</a>
-                        <a class="collapse-item" href="utilities-border.html">Issuance History</a>
+                        <a class="collapse-item" href="issuance.php">Create Issuance</a>
+                        <a class="collapse-item" href="isshistory.php">Issuance History</a>
                     </div>
                 </div>
             </li>
