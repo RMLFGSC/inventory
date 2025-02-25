@@ -1,12 +1,13 @@
 <?php
 include("../includes/header.php");
-include("../includes/navbar.php");
+include("../includes/navbar_admin.php");
 
 //query
 $query = "SELECT request.*, users.fullname AS requester_name, users.department
           FROM request 
           JOIN users ON request.user_id = users.user_id
-          WHERE req_id IN (SELECT MIN(req_id) FROM request GROUP BY req_number) 
+          WHERE request.status = 0 
+          AND req_id IN (SELECT MIN(req_id) FROM request GROUP BY req_number) 
           ORDER BY req_number ASC";
 $result = mysqli_query($conn, $query);
 ?>

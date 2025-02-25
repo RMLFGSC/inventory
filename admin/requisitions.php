@@ -10,7 +10,10 @@ if (!isset($_SESSION['auth_user']['user_id'])) {
 $query = "SELECT request.req_number, request.date, request.status, users.fullname AS requester_name, users.department
           FROM request 
           JOIN users ON request.user_id = users.user_id
-          GROUP BY request.req_number
+          WHERE request.status = 0 
+          AND request.req_id IN (SELECT MIN(req_id) 
+                                 FROM request 
+                                 GROUP BY req_number)
           ORDER BY request.req_id DESC";
 $result = mysqli_query($conn, $query);
 ?>
@@ -58,7 +61,6 @@ $result = mysqli_query($conn, $query);
                                                 <label>Item</label>
                                                 <select name="stockin_id[]" class="form-control" required>
                                                     <?php
-                                                    // Fetch items from stock_in table
                                                     $itemQuery = "SELECT item FROM stock_in";
                                                     $itemResult = mysqli_query($conn, $itemQuery);
                                                     while ($itemRow = mysqli_fetch_assoc($itemResult)) {
@@ -301,7 +303,6 @@ $result = mysqli_query($conn, $query);
         `;
 
                 const printWindow = window.open('', '', 'height=600,width=800');
-
                 printWindow.document.write('<html><head><title>Print</title>');
                 printWindow.document.write('<style>');
                 printWindow.document.write('body { font-family: Arial, sans-serif; margin: 20px; }');

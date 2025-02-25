@@ -7,7 +7,7 @@ $query = "SELECT r.req_number, r.date, u.fullname AS requester_name, u.departmen
           FROM request r 
           JOIN stock_in si ON r.stockin_id = si.stockin_id 
           JOIN users u ON r.user_id = u.user_id 
-          WHERE r.status IN (1, 2)  
+          WHERE r.status IN (1, 2)  -- 
           ORDER BY r.date DESC"; 
 $result = mysqli_query($conn, $query);
 ?>
@@ -26,7 +26,7 @@ $result = mysqli_query($conn, $query);
         <div class="container-fluid">
             <!-- Page Heading -->
             <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                <h1 class="h3 mb-0 text-gray-800">Request History</h1>
+                <h1 class="h3 mb-0 text-gray-800">Issuance History</h1>
             </div>
 
             <!-- DataTales Example -->
@@ -55,7 +55,7 @@ $result = mysqli_query($conn, $query);
                                             <?php
                                             // Display status based on the value
                                             if ($row['status'] == 1) {
-                                                echo '<span class="badge badge-success">Approved</span>';
+                                                echo '<span class="badge badge-success">Served</span>';
                                             } elseif ($row['status'] == 2) {
                                                 echo '<span class="badge badge-danger">Declined</span>';
                                             }

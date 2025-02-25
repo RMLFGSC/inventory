@@ -1,6 +1,6 @@
 <?php
 include("../includes/header.php");
-include("../includes/navbar.php");
+include("../includes/navbar_admin.php");
 ?>
 
 <!-- Content Wrapper -->
@@ -45,8 +45,8 @@ include("../includes/navbar.php");
                                     <input type="password" name="pword" class="form-control" required>
                                 </div>
                                 <div class="form-group col-md-6">
-                                    <label>Email Address</label>
-                                    <input type="email" name="email" class="form-control" required>
+                                    <label>Username</label>
+                                    <input type="text" name="username" class="form-control" required>
                                 </div>
                             </div>
                             <div class="form-row">
@@ -63,9 +63,9 @@ include("../includes/navbar.php");
                                 <label>Role</label>
                                 <select name="role" id="roleSelect" required class="form-control" onchange="toggleBranchField(this)">
                                     <option value="">Select Role</option>
-                                    <option value="superadmin">Superadmin</option>
                                     <option value="admin">Admin</option>
-                                    <option value="superuser">Superuser</option>
+                                    <option value="mmo">MMO</option>
+                                    <option value="engineering">Engineering</option>
                                     <option value="user">User</option>
                                 </select>
                             </div>
@@ -99,7 +99,7 @@ include("../includes/navbar.php");
                             <thead>
                                 <tr>
                                     <th>Full Name</th>
-                                    <th>Email</th>
+                                    <th>Username</th>
                                     <th>Department</th>
                                     <th>User Role</th>
                                     <th>Actions</th>
@@ -111,29 +111,30 @@ include("../includes/navbar.php");
                                 <?php while ($row = mysqli_fetch_assoc($result)): ?>
                                     <tr>
                                         <td><?php echo $row['fullname']; ?></td>
-                                        <td><?php echo $row['email']; ?></td>
+                                        <td><?php echo $row['username']; ?></td>
                                         <td><?php echo $row['department']; ?></td>
                                         <td>
                                             <?php
                                             switch ($row['role']) {
-                                                case 'superadmin':
-                                                    echo 'Superadmin';
-                                                    break;
                                                 case 'admin':
                                                     echo 'Admin';
                                                     break;
-                                                case 'superuser':
-                                                    echo 'Superuser';
+                                                case 'mmo':
+                                                    echo 'MMO';
+                                                    break;
+                                                case 'engineering':
+                                                    echo 'Engineering';
                                                     break;
                                                 case 'user':
                                                     echo 'User';
-                                                    break;
+                                                        break;
                                             }
                                             ?>
                                         </td>
                                         <td>
-                                            <button type="button" data-bs-toggle="modal" data-bs-target="#editProductModal" class="btn btn-sm btn-success editproduct-btn"><i class="fa-solid fa-edit"></i></button>
+                                            <button type="button" data-bs-toggle="modal" data-bs-target="#editModal" class="btn btn-sm btn-success editproduct-btn"><i class="fa-solid fa-edit"></i></button>
                                             <button type="button" data-bs-toggle="modal" data-bs-target="#viewProductModal" class="btn btn-sm btn-warning viewproduct-btn"><i class="fa-solid fa-eye text-white"></i></button>
+                                            <button type="button" data-bs-toggle="modal" data-bs-target="#deleteModal" class="btn btn-sm btn-danger viewproduct-btn"><i class="fa-solid fa-trash text-white"></i></button>
                                         </td>
                                     </tr>
                                 <?php endwhile; ?>

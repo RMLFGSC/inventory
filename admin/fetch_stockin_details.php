@@ -5,9 +5,8 @@ include("../dbconn/conn.php");
 if (isset($_POST['controlNO'])) {
     $controlNO = $_POST['controlNO'];
 
-    $query = "SELECT s.*, e.equip_name FROM stockin s 
-              JOIN equipment e ON s.equipment_id = e.equipment_id 
-              WHERE s.controlNO = ?";
+    $query = "SELECT * FROM stock_in  
+              WHERE controlNO = ?";
     $stmt = mysqli_prepare($conn, $query);
     mysqli_stmt_bind_param($stmt, 's', $controlNO);
     mysqli_stmt_execute($stmt);
@@ -16,8 +15,7 @@ if (isset($_POST['controlNO'])) {
     while ($row = mysqli_fetch_assoc($result)) {
         echo "<tr>
                 <td>" . htmlspecialchars($controlNO) . "</td>
-                <td>" . htmlspecialchars($row['equip_name']) . "</td>
-                <td>" . htmlspecialchars($row['model']) . "</td>
+                <td>" . htmlspecialchars($row['item']) . "</td>
                 <td>" . htmlspecialchars($row['qty']) . "</td>
                 <td>" . htmlspecialchars($row['category']) . "</td>
                 <td>" . htmlspecialchars($row['dop']) . "</td>

@@ -2,29 +2,24 @@
 include("../dbconn/conn.php"); 
 
 if (isset($_POST['req_number'])) {
-    $req_number = $_POST['req_number'];
+    $reqNO = $_POST['req_number'];
 
-    $query = "SELECT e.equip_name, r.qty FROM request r JOIN equipment e ON r.equipment_id = e.equipment_id WHERE r.req_number = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("s", $req_number); 
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $query = "SELECT si.item, r.qty
+              FROM request r 
+              JOIN stock_in si ON r.stockin_id = si.stockin_id 
+              WHERE r.req_number = ?";
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param($stmt, 's', $reqNO);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
 
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            echo "<tr>";
-            echo "<td>" . htmlspecialchars($row['equip_name']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['qty']) . "</td>";
-            echo "</tr>";
-        }
-    } else {
-        echo "<tr><td colspan='2'>No items found for this requisition.</td></tr>";
+    while ($row = mysqli_fetch_assoc($result)) {
+        echo "<tr>
+                <td>" . htmlspecialchars($row['item']) . "</td>
+                <td>" . htmlspecialchars($row['qty']) . "</td>
+              </tr>";
     }
 
-    $stmt->close();
-} else {
-    echo "<tr><td colspan='2'>Invalid requisition number.</td></tr>";
+    mysqli_stmt_close($stmt);
 }
-
-$conn->close();
 ?>
