@@ -1,6 +1,6 @@
 <?php
 
-$host = "192.168.80.73";
+$host = "localhost";
 $username = "root";
 $password = "";
 $database = "newgmc";
