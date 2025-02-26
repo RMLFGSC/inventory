@@ -37,7 +37,7 @@
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" href="requisitions.php">Manage Requisition</a>
-                        <a class="collapse-item" href="reqhistory.php">Requisition History</a>
+                        <!-- <a class="collapse-item" href="reqhistory.php">Requisition History</a> -->
                     </div>
                 </div>
             </li>
@@ -52,7 +52,7 @@
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" href="issuance.php">Create Issuance</a>
-                        <a class="collapse-item" href="isshistory.php">Issuance History</a>
+                        <!-- <a class="collapse-item" href="isshistory.php">Issuance History</a> -->
                     </div>
                 </div>
             </li>

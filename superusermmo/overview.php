@@ -13,19 +13,17 @@ include("../includes/navbar_mmo.php");
         <?php
         include("../includes/topbar.php");
 
-        // query
+        // Updated query to fetch stock information from stockin with item name and category
         $query = "SELECT 
-            stockin.equipment_id,   
-            equipment.equip_name,
-            stockin.category,
-            stockin.model,
-            SUM(stockin.qty) AS available_stock
-        FROM stockin 
-        JOIN equipment ON stockin.equipment_id = equipment.equipment_id
-        GROUP BY stockin.equipment_id, equipment.equip_name, stockin.category, stockin.model";
+            e.equip_name AS item_name,
+            s.category,
+            SUM(s.qty) AS available_stock
+        FROM stockin s 
+        JOIN equipment e ON s.equipment_id = e.equipment_id
+        GROUP BY e.equip_name, s.category
+        ORDER BY e.equip_name ASC"; // Adjust the order as needed
         $result = mysqli_query($conn, $query);
         ?>
-
 
         <div class="container-fluid">
             <!-- Page Heading -->
@@ -41,7 +39,6 @@ include("../includes/navbar_mmo.php");
                             <thead>
                                 <tr>
                                     <th>Item</th>
-                                    <th>Model</th>
                                     <th>Category</th>
                                     <th>Available Stock</th>
                                 </tr>
@@ -50,10 +47,9 @@ include("../includes/navbar_mmo.php");
                             <tbody>
                                 <?php while ($row = mysqli_fetch_assoc($result)): ?>
                                     <tr>
-                                        <td><?php echo $row['equip_name']; ?></td>
-                                        <td><?php echo $row['model']; ?></td>
-                                        <td><?php echo $row['category']; ?></td>
-                                        <td><?php echo $row['available_stock']; ?></td>
+                                        <td><?php echo htmlspecialchars($row['item_name']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['category']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['available_stock']); ?></td>
                                     </tr>
                                 <?php endwhile; ?>
                             </tbody>
@@ -65,7 +61,6 @@ include("../includes/navbar_mmo.php");
         </div>
         <!-- /.container-fluid -->
 
-
     </div>
     <!-- End of Main Content -->
 
@@ -73,5 +68,5 @@ include("../includes/navbar_mmo.php");
     include("../includes/scripts.php");
     include("../includes/footer.php");
     include("../includes/datatables.php");
-
     ?>
+</div>
