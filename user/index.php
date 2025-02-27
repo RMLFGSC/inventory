@@ -1,21 +1,7 @@
 <?php
 include("../includes/header.php");
-include("../includes/navbar_admin.php");
-
-if (!isset($_SESSION['auth_user']['user_id'])) {
-    die("Error: User is not logged in. Please log in first.");
-}
-
-//query
-$query = "SELECT request.req_number, request.date, request.status, users.fullname AS requester_name, users.department
-          FROM request 
-          JOIN users ON request.user_id = users.user_id
-          WHERE request.req_id IN (SELECT MIN(req_id) 
-          FROM request 
-          GROUP BY req_number)
-          ORDER BY request.status = 0 DESC";
-$result = mysqli_query($conn, $query);
 ?>
+
 
 <!-- Content Wrapper -->
 <div id="content-wrapper" class="d-flex flex-column">
@@ -23,11 +9,11 @@ $result = mysqli_query($conn, $query);
     <!-- Main Content -->
     <div id="content">
 
+
         <!-- topbar -->
         <?php
-        include("../includes/topbar.php");
+        include("../includes/topbar_user.php");
         ?>
-
 
         <!-- ADD MODAL -->
         <div class="modal fade" id="GMCaddRequest" tabindex="-1" role="dialog" aria-labelledby="RequestModalLabel"
@@ -218,112 +204,12 @@ $result = mysqli_query($conn, $query);
     </div>
     <!-- End of Main Content -->
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            document.getElementById('addRequest').addEventListener('click', function () {
-                const itemFields = document.getElementById('itemFields');
-                const newItemRow = document.createElement('div');
-                newItemRow.classList.add('form-row', 'item-row', 'mb-2');
 
-                newItemRow.innerHTML = `
-                        <div class="form-group col-md-6">
-                            <label>Item</label>
-                            <select name="stockin_id[]" class="form-control" required>
-                                <?php
-                                // Fetch items from stock_in table
-                                $itemQuery = "SELECT item FROM stock_in";
-                                $itemResult = mysqli_query($conn, $itemQuery);
-                                while ($itemRow = mysqli_fetch_assoc($itemResult)) {
-                                    echo '<option value="' . htmlspecialchars($itemRow['item']) . '">' . htmlspecialchars($itemRow['item']) . '</option>';
-                                }
-                                ?>
-                            </select>
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label>Quantity</label>
-                            <input type="text" name="qty[]" class="form-control" required>
-                        </div>
-                        <button type="button" class="btn btn-danger btn-sm removeItem">X</button>`;
 
-                itemFields.appendChild(newItemRow);
 
-                newItemRow.querySelector('.removeItem').addEventListener('click', function () {
-                    itemFields.removeChild(newItemRow); // Remove the item row
-                });
-            });
-
-            // Update view modal functionality
-            $('.viewrequest-btn').on('click', function () {
-                const reqno = $(this).data('req_number');
-
-                // ajax to fetch the details of the requisition
-                $.ajax({
-                    url: 'fetch_request_items.php',
-                    type: 'POST',
-                    data: {
-                        req_number: reqno
-                    },
-                    success: function (data) {
-                        $('#requestDetailsBody').html(data);
-
-                        $('#requesterName').text(data.requester_name);
-                        $('#requesterDepartment').text(data.department);
-                        $('#requestDate').text(data.date_requested);
-                    },
-                    error: function (xhr, status, error) {
-                        console.error("Error fetching request items: ", error);
-                    }
-                });
-            });
-
-            document.getElementById('printRequest').addEventListener('click', function () {
-                const printContents = `
-                <div style="text-align: center;">
-                    <img src="path/to/your/logo.png" alt="Logo" style="width: 150px; height: auto; margin-bottom: 20px;">
-                    <h2>Requisition Form</h2>
-                    <p><strong>Requested By:</strong> <span id="requesterName"></span></p>
-                    <p><strong>Department:</strong> <span id="requesterDepartment"></span></p>
-                    <p><strong>Date:</strong> <span id="requestDate"></span></p>
-                    <hr>
-                </div>
-                <div class="table-responsive">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Items</th>
-                                <th>Qty</th>
-                            </tr>
-                        </thead>
-                        <tbody id="requestDetailsBody">
-                            ${document.querySelector('#requestDetailsBody').innerHTML}
-                        </tbody>
-                    </table>
-                </div>
-        `;
-
-                const printWindow = window.open('', '', 'height=600,width=800');
-                printWindow.document.write('<html><head><title>Print</title>');
-                printWindow.document.write('<style>');
-                printWindow.document.write('body { font-family: Arial, sans-serif; margin: 20px; }');
-                printWindow.document.write('h1, h2, h3, h4, h5, h6 { color: #333; text-align: center; }');
-                printWindow.document.write('table { width: 100%; border-collapse: collapse; margin-top: 20px; }');
-                printWindow.document.write('th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }');
-                printWindow.document.write('th { background-color: #f2f2f2; }');
-                printWindow.document.write('p { margin: 5px 0; text-align: center; }');
-                printWindow.document.write('</style>');
-                printWindow.document.write('</head><body>');
-                printWindow.document.write(printContents);
-                printWindow.document.write('</body></html>');
-
-                printWindow.document.close();
-                printWindow.print();
-                printWindow.close();
-            });
-        });
-    </script>
 
     <?php
     include("../includes/scripts.php");
     include("../includes/footer.php");
-    include("../includes/datatables.php");
+
     ?>
