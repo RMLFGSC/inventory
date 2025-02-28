@@ -6,18 +6,11 @@ if (!isset($_SESSION['auth_user']['user_id'])) {
     die("Error: User is not logged in. Please log in first.");
 }
 
-// Query to fetch only pending requisition requests
-$query = "SELECT request.req_number, 
-                 request.date, 
-                 request.status, 
-                 users.fullname AS requester_name, 
-                 users.department
+//query
+$query = "SELECT request.req_number, request.date, request.status, users.fullname AS requester_name, users.department
           FROM request 
           JOIN users ON request.user_id = users.user_id
-          WHERE request.status = 0 
-          AND request.req_id IN (SELECT MIN(req_id) 
-                                 FROM request 
-                                 GROUP BY req_number)
+          GROUP BY request.req_number
           ORDER BY request.req_id DESC";
 $result = mysqli_query($conn, $query);
 ?>
@@ -132,7 +125,7 @@ $result = mysqli_query($conn, $query);
                                 <input type="text" id="date" name="date" class="form-control" readonly>
                             </div>
                         </div>
-                        <div class="table">
+                        <div class="table-responsive">
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>
@@ -157,7 +150,7 @@ $result = mysqli_query($conn, $query);
         <div class="container-fluid">
             <!-- Page Heading -->
             <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                <h1 class="h3 mb-0 text-gray-800">Pending Requisitions</h1>
+                <h1 class="h3 mb-0 text-gray-800">Requisitions</h1>
                 <button type="button" class="btn btn-sm btn-primary shadow-sm" data-toggle="modal"
                     data-target="#GMCaddRequest">
                     <i class="fas fa-plus fa-sm text-white-50"></i> Add Request
@@ -171,7 +164,7 @@ $result = mysqli_query($conn, $query);
                         <table class="datatables-basic table" id="dataTable" width="100%">
                             <thead>
                                 <tr>
-                                    <th>Req Number</th>
+                                    <th>Requisition #</th>
                                     <th>Requester</th>
                                     <th>Department</th>
                                     <th>Date</th>
@@ -183,10 +176,10 @@ $result = mysqli_query($conn, $query);
                             <tbody>
                                 <?php while ($row = mysqli_fetch_assoc($result)): ?>
                                     <tr>
-                                        <td><?php echo htmlspecialchars($row['req_number']); ?></td>
-                                        <td><?php echo htmlspecialchars($row['requester_name']); ?></td>
-                                        <td><?php echo htmlspecialchars($row['department']); ?></td>
-                                        <td><?php echo htmlspecialchars($row['date']); ?></td>
+                                        <td><?php echo $row['req_number']; ?></td>
+                                        <td><?php echo $row['requester_name']; ?></td>
+                                        <td><?php echo $row['department']; ?></td>
+                                        <td><?php echo $row['date']; ?></td>
                                         <td>
                                             <?php
                                             if ($row['status'] == 0) {
@@ -198,11 +191,12 @@ $result = mysqli_query($conn, $query);
                                             }
                                             ?>
                                         </td>
+
                                         <td>
                                             <button type="button" data-toggle="modal" data-target="#viewRequestModal"
                                                 class="btn btn-sm btn-warning viewrequest-btn"
-                                                data-req_number="<?php echo $row['req_number']; ?>">
-                                                <i class="fa-solid fa-eye"></i>
+                                                data-req_number="<?php echo htmlspecialchars($row['req_number']); ?>">
+                                                <i class="fa-solid fa-eye text-white"></i>
                                             </button>
                                         </td>
                                     </tr>

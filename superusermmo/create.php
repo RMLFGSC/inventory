@@ -51,19 +51,17 @@ if (isset($_POST['addStockin'])) {
     $cat_name = $_POST['category'];
     $dop = $_POST['dop'];
     $dr = $_POST['dr'];
-    $item_names = $_POST['equipment_id'];
-    $models = $_POST['model'];
+    $item_names = $_POST['item'];
     $qtys = $_POST['qty'];
     $warranties = isset($_POST['warranty']) ? $_POST['warranty'] : [];
 
     for ($i = 0; $i < count($item_names); $i++) {
         $item = mysqli_real_escape_string($conn, $item_names[$i]);
-        $model = mysqli_real_escape_string($conn, $models[$i]);
         $qty = intval($qtys[$i]);
         $warranty = in_array($i + 1, $warranties) ? 1 : 0; 
 
-        $query = "INSERT INTO stockin (controlNO, equipment_id, model, category, qty, dop, dr, warranty) 
-                  VALUES ('$controlNO', '$item', '$model', '$cat_name', '$qty', '$dop', '$dr', '$warranty')";
+        $query = "INSERT INTO stockin (controlNO, item, category, qty, dop, dr, warranty) 
+                  VALUES ('$controlNO', '$item', '$cat_name', '$qty', '$dop', '$dr', '$warranty')";
         
         $query_run = mysqli_query($conn, $query);
 
