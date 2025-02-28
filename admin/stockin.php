@@ -1,6 +1,6 @@
 <?php
 include("../includes/header.php");
-include("../includes/navbar.php");
+include("../includes/navbar_admin.php");
 
 // Fetch the last control number from the database
 $lastControlNoQuery = "SELECT controlNO FROM stock_in ORDER BY stockin_id DESC LIMIT 1";
@@ -121,7 +121,7 @@ $result = mysqli_query($conn, $query);
         <!-- end of add modal -->
 
         <!-- View Product Modal -->
-        <div class="modal fade" id="viewStockinModal" tabindex="-1" role="dialog" aria-labelledby="viewStockinModalLabel" aria-hidden="true">
+        <div class="modal fade" id="viewModal" tabindex="-1" role="dialog" aria-labelledby="viewStockinModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -192,7 +192,7 @@ $result = mysqli_query($conn, $query);
                 });
 
                 // Update view modal functionality
-                $('.viewstockin-btn').on('click', function() {
+                $('.view-btn').on('click', function() {
                     const controlno = $(this).data('controlno');
 
                     // ajax para i fetch ang details sa stockin sa view modal
@@ -249,11 +249,12 @@ $result = mysqli_query($conn, $query);
                                         <td><?php echo $row['qty']; ?></td>
                                         <td><?php echo $row['dr']; ?></td>
                                         <td>
-                                            <button type="button" data-bs-toggle="modal" data-bs-target="#editProductModal" class="btn btn-sm btn-success editproduct-btn"><i class="fa-solid fa-edit"></i></button>
-                                            <button type="button" data-toggle="modal" data-target="#viewStockinModal" class="btn btn-sm btn-warning viewstockin-btn"
+                                            <button type="button" data-bs-toggle="modal" data-bs-target="#editModal" class="btn btn-sm btn-success edit-btn"><i class="fa-solid fa-edit"></i></button>
+                                            <button type="button" data-toggle="modal" data-target="#viewModal" class="btn btn-sm btn-warning view-btn"
                                                 data-controlno="<?php echo htmlspecialchars($row['controlNO']); ?>">
                                                 <i class="fa-solid fa-eye text-white"></i>
                                             </button>
+                                            <button type="button" data-bs-toggle="modal" data-bs-target="#postModal" class="btn btn-sm btn-info post-btn"><i class="fa-solid fa-square-check"></i></button>
                                         </td>
                                     </tr>
                                 <?php endwhile; ?>

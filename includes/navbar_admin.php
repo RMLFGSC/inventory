@@ -4,7 +4,7 @@
             <div style="margin-top: 20px;"></div> 
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="../admin/index.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
@@ -44,7 +44,6 @@
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" href="requisitions.php">Manage Requisition</a>
-                        <a class="collapse-item" href="reqhistory.php">Requisition History</a>
                     </div>
                 </div>
             </li>
@@ -58,13 +57,16 @@
                 <div id="auth3" class="collapse" aria-labelledby="headingUtilities"
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="issuance.php">Create Issuance</a>
-                        <a class="collapse-item" href="issuancehistory.php">Issuance History</a>
+                        <a class="collapse-item" href="issuance.php">Manage Issuance</a>
                     </div>
                 </div>
             </li>
 
-         
+            <li class="nav-item">
+                <a class="nav-link" href="users.php">
+                    <i class="fas fa-fw fa-user"></i>
+                    <span>Users</span></a>
+            </li>
 
             <li class="nav-item">
                 <a class="nav-link" href="items.php">

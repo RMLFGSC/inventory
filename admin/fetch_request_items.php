@@ -4,9 +4,10 @@ include("../dbconn/conn.php");
 if (isset($_POST['req_number'])) {
     $reqNO = $_POST['req_number'];
 
-    $query = "SELECT si.item, r.qty
+    $query = "SELECT u.fullname, u.department, r.date, si.item, r.qty
               FROM request r 
               JOIN stock_in si ON r.stockin_id = si.stockin_id 
+              JOIN users u ON r.user_id = u.user_id  
               WHERE r.req_number = ?";
     $stmt = mysqli_prepare($conn, $query);
     mysqli_stmt_bind_param($stmt, 's', $reqNO);
