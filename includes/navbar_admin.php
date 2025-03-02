@@ -35,31 +35,15 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#auth2"
-                    aria-expanded="true" aria-controls="collapseUtilities">
-                    <i class="fas fa-fw fa-list-alt"></i>
-                    <span>Requisition</span>
-                </a>
-                <div id="auth2" class="collapse" aria-labelledby="headingUtilities"
-                    data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="requisitions.php">Manage Requisition</a>
-                    </div>
-                </div>
+                <a class="nav-link" href="requisitions.php">
+                <i class="fas fa-fw fa-list-alt"></i>
+                    <span>Requisitions</span></a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#auth3"
-                    aria-expanded="true" aria-controls="collapseUtilities">
-                    <i class="fas fa-fw fa-share-square"></i>
-                    <span>Issuance</span>
-                </a>
-                <div id="auth3" class="collapse" aria-labelledby="headingUtilities"
-                    data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="issuance.php">Manage Issuance</a>
-                    </div>
-                </div>
+                <a class="nav-link" href="issuance.php">
+                <i class="fas fa-fw fa-share-square"></i>
+                    <span>Issuance</span></a>
             </li>
 
             <li class="nav-item">
