@@ -3,12 +3,12 @@ include("../includes/header.php");
 include("../includes/navbar_eng.php");
 
 //query
-$query = "SELECT request.*, users.fullname AS requester_name, users.department, equipment.equip_name
+$query = "SELECT request.*, users.fullname AS requester_name, users.department, stock_in.item
           FROM request 
           JOIN users ON request.user_id = users.user_id
-          JOIN equipment ON request.equipment_id = equipment.equipment_id
+          JOIN stock_in ON request.stockin_id = stock_in.stockin_id
           WHERE req_id IN (SELECT MIN(req_id) FROM request GROUP BY req_number) 
-          AND equipment.category = 'Engineering Equipment' 
+          AND stock_in.category = 'Engineering Equipment' 
           ORDER BY req_number ASC";
 $result = mysqli_query($conn, $query);
 ?>
@@ -146,7 +146,7 @@ $result = mysqli_query($conn, $query);
                                         <td><?php echo $row['req_number']; ?></td>
                                         <td><?php echo $row['requester_name']; ?></td>
                                         <td><?php echo $row['department']; ?></td>
-                                        <td><?php echo $row['equip_name']; ?></td>
+                                        <td><?php echo $row['item']; ?></td>
                                         <td><?php echo $row['qty']; ?></td>
                                         <td><?php echo $row['date']; ?></td>
                                         <td>

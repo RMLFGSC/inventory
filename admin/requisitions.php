@@ -13,7 +13,12 @@ $query = "SELECT request.req_number, request.date, request.status, users.fullnam
           WHERE request.req_id IN (SELECT MIN(req_id) 
           FROM request 
           GROUP BY req_number)
-          ORDER BY request.status = 0 DESC";
+          ORDER BY 
+              CASE 
+                  WHEN request.status = 0 THEN 0 
+                  ELSE 1 
+              END, 
+              request.date DESC"; 
 $result = mysqli_query($conn, $query);
 ?>
 

@@ -40,7 +40,22 @@ include("../includes/navbar_admin.php");
                                         <div class="form-row item-row">
                                             <div class="form-group col-md-4">
                                                 <label>Item</label>
-                                                <input type="text" name="item[]" class="form-control" required>
+                                                <select name="item[]" class="form-control" required>
+                                                    <?php
+                                                    // Fetch approved items from the request table and join with stockin table
+                                                    $itemQuery = "
+                                                        SELECT DISTINCT s.item
+                                                        FROM request r 
+                                                        JOIN stock_in s ON r.stockin_id = s.stockin_id 
+                                                        WHERE r.status = 'approved'
+                                                    ";
+                                                    $itemResult = mysqli_query($conn, $itemQuery);
+                                                    while ($itemRow = mysqli_fetch_assoc($itemResult)): ?>
+                                                        <option value="<?php echo htmlspecialchars($itemRow['item']); ?>">
+                                                            <?php echo htmlspecialchars($itemRow['item']); ?>
+                                                        </option>
+                                                    <?php endwhile; ?>
+                                                </select>
                                             </div>
                                             <div class="form-group col-md-4">
                                                 <label>Quantity</label>
@@ -149,7 +164,8 @@ include("../includes/navbar_admin.php");
                         <table class="datatables-basic table" id="dataTable" width="100%">
                             <thead>
                                 <tr>
-                                    <th>Name</th>
+                                    <th>Item</th>
+                                    <th>User</th>
                                     <th>Department</th>
                                     <th>Action</th>
                                 </tr>
@@ -158,6 +174,7 @@ include("../includes/navbar_admin.php");
                             <tbody>
                                 <?php while ($row = mysqli_fetch_assoc($result)): ?>
                                     <tr>
+                                        <td><?php echo $row['name']; ?></td>
                                         <td><?php echo $row['name']; ?></td>
                                         <td><?php echo $row['department']; ?></td>
                                         <td>
@@ -207,9 +224,24 @@ include("../includes/navbar_admin.php");
                 // Updated HTML with inline remove button
                 newItemRow.innerHTML = `
                     <div class="form-group col-md-4">
-                        <label>Item</label>
-                        <input type="text" name="item[]" class="form-control" required>
-                    </div>
+                                                <label>Item</label>
+                                                <select name="item[]" class="form-control" required>
+                                                    <?php
+                                                    // Fetch approved items from the request table and join with stockin table
+                                                    $itemQuery = "
+                                                        SELECT DISTINCT s.item
+                                                        FROM request r 
+                                                        JOIN stock_in s ON r.stockin_id = s.stockin_id 
+                                                        WHERE r.status = 'approved'
+                                                    ";
+                                                    $itemResult = mysqli_query($conn, $itemQuery);
+                                                    while ($itemRow = mysqli_fetch_assoc($itemResult)): ?>
+                                                        <option value="<?php echo htmlspecialchars($itemRow['item']); ?>">
+                                                            <?php echo htmlspecialchars($itemRow['item']); ?>
+                                                        </option>
+                                                    <?php endwhile; ?>
+                                                </select>
+                                            </div>
                     <div class="form-group col-md-4">
                         <label>Quantity</label>
                         <input type="text" name="qty[]" class="form-control" required>

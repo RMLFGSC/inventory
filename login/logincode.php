@@ -39,7 +39,7 @@ if (isset($_POST['login-btn']) && !empty($_POST['username']) && !empty($_POST['p
                     header("Location: ../engineering/index.php");
                     break;
                 case 'user':
-                    header("Location: ../user/index.php");
+                    header("Location: ../user/request.php");
                     break;
                 default:
                     $_SESSION['message_ni'] = "Invalid user role";

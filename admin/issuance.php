@@ -113,6 +113,7 @@ $result = mysqli_query($conn, $query);
         </div>
         <!-- End of Decline Confirmation Modal -->
 
+
         <div class="container-fluid">
             <!-- Page Heading -->
             <div class="d-sm-flex align-items-center justify-content-between mb-4">
@@ -252,10 +253,18 @@ $result = mysqli_query($conn, $query);
                     return;
                 }
 
+                // Collect items to be deducted
+                const itemsToDeduct = []; // Array to hold item data
+                $('#view_request_items tr').each(function() {
+                    const itemId = $(this).data('item_id'); 
+                    const quantity = $(this).find('.item-quantity').val(); 
+                    itemsToDeduct.push({ id: itemId, qty: quantity });
+                });
+
                 $.ajax({
                     url: 'update_status.php',
                     type: 'POST',
-                    data: { id: requestId, status: 1 }, // 1 for served
+                    data: { id: requestId, status: 1, items: itemsToDeduct }, // 1 for served
                     success: function (response) {
                         console.log("Status updated successfully: ", response);
                         location.reload(); 

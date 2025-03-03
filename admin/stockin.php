@@ -7,7 +7,7 @@ $lastControlNoQuery = "SELECT controlNO FROM stockin ORDER BY stockin_id DESC LI
 $lastControlNoResult = mysqli_query($conn, $lastControlNoQuery);
 $lastControlNo = mysqli_fetch_assoc($lastControlNoResult);
 $nextControlNo = isset($lastControlNo['controlNO']) ? intval(substr($lastControlNo['controlNO'], 3)) + 1 : 1; // Increment the last number
-$controlNumber = 'CN-' . $nextControlNo; 
+$controlNumber = 'CN-' . $nextControlNo;
 
 //query
 $query = "SELECT * FROM stockin WHERE stockin_id IN 
@@ -157,23 +157,42 @@ $result = mysqli_query($conn, $query);
         </div>
         <!--End of view modal-->
 
+<<<<<<< HEAD
         <!-- Edit Modal -->
         <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="editModalLabel">Edit Stock-in</h5>
+=======
+        <!-- EDIT MODAL -->
+        <div class="modal fade" id="GMCeditStockin" tabindex="-1" role="dialog" aria-labelledby="ItemModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="ItemModalLabel">Edit Stock-in Details</h5>
+>>>>>>> 7e77c1e1957b9f8d933fc6415c2faea16ceb9f32
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
+<<<<<<< HEAD
                     <form id="editStockinForm" action="update.php" method="POST">
                         <div class="modal-body">
+=======
+
+                    <form action="edit.php" method="POST">
+                        <div class="modal-body">
+
+                            <input type="hidden" name="update_stockin_id" id="update_stockin_id">
+
+>>>>>>> 7e77c1e1957b9f8d933fc6415c2faea16ceb9f32
                             <div class="card">
                                 <div class="card-header text-white" style="background-color: #76a73c;">
                                     <strong>Stock-in Items</strong>
                                 </div>
                                 <div class="card-body">
+<<<<<<< HEAD
                                     <input type="hidden" name="stockin_id" id="editStockinId">
                                     <div id="editItemFields">
                                         <div class="form-row item-row mb-3">
@@ -189,10 +208,27 @@ $result = mysqli_query($conn, $query);
                                                 <div class="form-check">
                                                     <input type="checkbox" class="form-check-input" id="editWarranty" name="warranty[]" value="1">
                                                     <label class="form-check-label" for="editWarranty">With Warranty?</label>
+=======
+                                    <div id="itemFields">
+                                        <div class="form-row item-row mb-3">
+                                            <div class="form-group col-md-6 col-12">
+                                                <label>Item</label>
+                                                <input type="text" name="item[]" id="edit_item[]" class="form-control" required>
+                                            </div>
+                                            <div class="form-group col-md-6 col-12">
+                                                <label>Quantity</label>
+                                                <input type="number" name="qty[]" id="edit_qty[]" class="form-control" required>
+                                            </div>
+                                            <div class="form-group col-md-12">
+                                                <div class="form-check">
+                                                    <input type="checkbox" class="form-check-input" id="edit_warranty1" name="warranty[]" value="1">
+                                                    <label class="form-check-label" for="warranty1">With Warranty?</label>
+>>>>>>> 7e77c1e1957b9f8d933fc6415c2faea16ceb9f32
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+<<<<<<< HEAD
 
                                     <div class="mt-3 text-center">
                                         <button type="button" class="btn btn-sm btn-secondary" id="addItemEdit">Add Item</button>
@@ -227,12 +263,59 @@ $result = mysqli_query($conn, $query);
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                             <button type="submit" class="btn btn-primary">Update</button>
+=======
+                                </div>
+                            </div>
+
+                            <div class="mt-3 text-center">
+                                <button type="button" class="btn btn-sm btn-secondary" id="addItem">Add Item</button>
+                            </div>
+
+                            <hr>
+
+                            <div class="form-row">
+                                <div class="form-group col-md-6 col-12">
+                                    <label>Control Number</label>
+                                    <input type="text" name="controlNO" class="form-control" value="<?php echo $controlNumber; ?>" readonly>
+                                </div>
+                                <div class="form-group col-md-6 col-12">
+                                    <label for="category">Category</label>
+                                    <select class="custom-select" id="edit_cat_id" name="category" aria-label="Default select example" required>
+                                        <option value="" selected disabled>Select Category</option>
+                                        <option value="IT Equipment">IT Equipment</option>
+                                        <option value="Engineering Equipment">Engineering Equipment</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group col-md-6 col-12">
+                                    <label>Date of Purchase</label>
+                                    <input type="date" id="edit_dop" name="dop" class="form-control" required>
+                                </div>
+                                <div class="form-group col-md-6 col-12">
+                                    <label>Date Received</label>
+                                    <input type="date" id="edit_dr" name="dr" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" name="editStockinData" class="btn btn-primary">Update</button>
+>>>>>>> 7e77c1e1957b9f8d933fc6415c2faea16ceb9f32
                         </div>
                     </form>
                 </div>
             </div>
         </div>
+<<<<<<< HEAD
         <!-- End of Edit Modal -->
+=======
+        <!-- end of edit modal -->
+
+
+>>>>>>> 7e77c1e1957b9f8d933fc6415c2faea16ceb9f32
 
         <script>
             document.addEventListener('DOMContentLoaded', function() {
@@ -391,14 +474,18 @@ $result = mysqli_query($conn, $query);
                                         <td><?php echo $row['qty']; ?></td>
                                         <td><?php echo $row['dr']; ?></td>
                                         <td>
+<<<<<<< HEAD
                                             <button type="button" data-bs-toggle="modal" data-bs-target="#editModal" class="btn btn-sm btn-success edit-btn" data-stockin-id="<?php echo $row['stockin_id']; ?>">
                                                 <i class="fa-solid fa-edit"></i>
                                             </button>
+=======
+                                            <button type="button" data-bs-toggle="modal" data-bs-target="#GMCeditStockin" class="btn btn-sm btn-success edit-btn"><i class="fa-solid fa-edit"></i></button>
+>>>>>>> 7e77c1e1957b9f8d933fc6415c2faea16ceb9f32
                                             <button type="button" data-toggle="modal" data-target="#viewModal" class="btn btn-sm btn-warning view-btn"
                                                 data-controlno="<?php echo htmlspecialchars($row['controlNO']); ?>">
                                                 <i class="fa-solid fa-eye text-white"></i>
                                             </button>
-                                            <button type="button" data-bs-toggle="modal" data-bs-target="#postModal" class="btn btn-sm btn-info post-btn"><i class="fa-solid fa-square-check"></i></button>
+                                            <button type="button" data-bs-toggle="modal" data-bs-target="#confirmPostModal" class="btn btn-sm btn-info post-btn"><i class="fa-solid fa-square-check"></i></button>
                                         </td>
                                     </tr>
                                 <?php endwhile; ?>
