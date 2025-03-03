@@ -12,7 +12,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] == true) {
                     <!-- Add Logo and Gensan Medical Center text -->
                     <div class="d-flex align-items-center">
                         <img src="../img/gmc-logo.jpg" alt="GMC Logo" style="width: 40px; height: 40px; border-radius: 50%;" class="mr-2">
-                        <span class="mr-3" style="font-weight: bold;">Gensan Medical Center</span>
+                        <span class="mr-3" style="font-weight: bold;">GENSANMED</span>
                     </div>
                     
                     <!-- Sidebar Toggle (Topbar) -->

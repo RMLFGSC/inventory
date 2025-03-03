@@ -81,6 +81,27 @@ include("../includes/navbar_admin.php");
         </div>
         <!-- end of add modal -->
 
+        <!-- Delete Confirmation Modal -->
+        <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmationLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteConfirmationLabel">Confirm Deletion</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to remove this user?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end of delete confirmation modal -->
 
         <div class="container-fluid">
             <!-- Page Heading -->
@@ -134,7 +155,7 @@ include("../includes/navbar_admin.php");
                                         <td>
                                             <button type="button" data-bs-toggle="modal" data-bs-target="#editModal" class="btn btn-sm btn-success editproduct-btn"><i class="fa-solid fa-edit"></i></button>
                                             <button type="button" data-bs-toggle="modal" data-bs-target="#viewProductModal" class="btn btn-sm btn-warning viewproduct-btn"><i class="fa-solid fa-eye text-white"></i></button>
-                                            <button type="button" data-bs-toggle="modal" data-bs-target="#deleteModal" class="btn btn-sm btn-danger viewproduct-btn"><i class="fa-solid fa-trash text-white"></i></button>
+                                            <button type="button" class="btn btn-sm btn-danger delete-btn" data-id="<?php echo $row['user_id']; ?>" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal"><i class="fa-solid fa-trash text-white"></i></button>
                                         </td>
                                     </tr>
                                 <?php endwhile; ?>
@@ -155,3 +176,35 @@ include("../includes/navbar_admin.php");
     include("../includes/scripts.php");
     include("../includes/footer.php");
     ?>
+
+<script>
+    // JavaScript to handle delete confirmation
+    let userIdToDelete;
+
+    document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            userIdToDelete = this.getAttribute('data-id');
+        });
+    });
+
+    document.getElementById('confirmDelete').addEventListener('click', function() {
+        // Make an AJAX request to archive the user
+        fetch('archive_user.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id: userIdToDelete }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Remove the user from the table
+                document.querySelector(`button[data-id="${userIdToDelete}"]`).closest('tr').remove();
+                $('#deleteConfirmationModal').modal('hide');
+            } else {
+                alert('Error archiving user.');
+            }
+        });
+    });
+</script>
