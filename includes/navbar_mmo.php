@@ -28,7 +28,7 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#auth2"
+                <a class="nav-link collapsed" href="" data-toggle="collapse" data-target="#auth2"
                     aria-expanded="true" aria-controls="collapseUtilities">
                     <i class="fas fa-fw fa-list-alt"></i>
                     <span>Requisition</span>
@@ -43,7 +43,7 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#auth3"
+                <a class="nav-link collapsed" href="issuance.php" data-toggle="collapse" data-target="#auth3"
                     aria-expanded="true" aria-controls="collapseUtilities">
                     <i class="fas fa-fw fa-share-square"></i>
                     <span>Issuance</span>
