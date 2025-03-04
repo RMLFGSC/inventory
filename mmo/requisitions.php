@@ -36,8 +36,8 @@ $result = mysqli_query($conn, $query);
         include("../includes/topbar.php");
         ?>
 
-                <!-- ADD MODAL -->
-                <div class="modal fade" id="GMCaddRequest" tabindex="-1" role="dialog" aria-labelledby="RequestModalLabel"
+        <!-- ADD MODAL -->
+        <div class="modal fade" id="GMCaddRequest" tabindex="-1" role="dialog" aria-labelledby="RequestModalLabel"
             aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -102,42 +102,6 @@ $result = mysqli_query($conn, $query);
         </div>
         <!-- end of add modal -->
 
-        
-    <!-- Add Requisition Modal -->
-    <div class="modal fade" id="addRequisitionModal" tabindex="-1" role="dialog" aria-labelledby="addRequisitionModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addRequisitionModalLabel">Add Requisition</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="addRequisitionForm">
-                        <div class="form-group">
-                            <label for="requesterName">Requester Name</label>
-                            <input type="text" class="form-control" id="requesterName" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="department">Department</label>
-                            <input type="text" class="form-control" id="department" required>
-                        </div>
-                        <div id="itemFieldsContainer">
-                            <!-- Item fields will be added here -->
-                        </div>
-                        <button type="button" class="btn btn-primary" id="addItemButton">Add Item</button>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="submitRequisitionButton">Submit Requisition</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- End of Add Requisition Modal -->
-
         <!-- View Request Modal -->
         <div class="modal fade" id="viewRequestModal" tabindex="-1" role="dialog" aria-labelledby="viewRequestModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -178,7 +142,7 @@ $result = mysqli_query($conn, $query);
                                     </tr>
                                 </thead>
                                 <tbody id="view_request_items">
-                                    <!-- Rows will be populated dynamically -->
+                                    
                                 </tbody>
                             </table>
                         </div>
@@ -267,17 +231,18 @@ $result = mysqli_query($conn, $query);
                             <label>Item</label>
                             <select name="stockin_id[]" class="form-control" required>
                                 <?php
-                                $itemQuery = "SELECT stockin_id, item FROM stockin"; // Adjusted to select stockin_id
+                                // Fetch items from stock_in table
+                                $itemQuery = "SELECT item FROM stock_in";
                                 $itemResult = mysqli_query($conn, $itemQuery);
                                 while ($itemRow = mysqli_fetch_assoc($itemResult)) {
-                                    echo '<option value="' . htmlspecialchars($itemRow['stockin_id']) . '">' . htmlspecialchars($itemRow['item_name']) . '</option>';
+                                    echo '<option value="' . htmlspecialchars($itemRow['item']) . '">' . htmlspecialchars($itemRow['item']) . '</option>';
                                 }
                                 ?>
                             </select>
                         </div>
                         <div class="form-group col-md-6">
                             <label>Quantity</label>
-                            <input type="number" name="qty[]" class="form-control" required>
+                            <input type="text" name="qty[]" class="form-control" required>
                         </div>
                         <button type="button" class="btn btn-danger btn-sm removeItem">X</button>`;
 
@@ -288,42 +253,26 @@ $result = mysqli_query($conn, $query);
                 });
             });
 
-            // View request modal functionality
+            // Update view modal functionality
             $('.viewrequest-btn').on('click', function () {
-                const reqNumber = $(this).data('req_number'); // Get the requisition number from the button
+                const reqno = $(this).data('req_number');
 
-                // Fetch requisition details via AJAX
+                // ajax to fetch the details of the requisition
                 $.ajax({
-                    url: 'fetch_requisition_details.php', // Ensure this is the correct path
+                    url: 'fetch_request_items.php',
                     type: 'POST',
-                    data: { req_number: reqNumber },
-                    dataType: 'json', // Expect JSON response
+                    data: {
+                        req_number: reqno
+                    },
                     success: function (data) {
-                        if (data) {
-                            // Populate the modal fields with the fetched data
-                            $('#requestedBy').val(data.requester_name);
-                            $('#department').val(data.department);
-                            $('#requisitionNumber').val(data.req_number);
-                            $('#date').val(data.date);
+                        $('#requestDetailsBody').html(data);
 
-                            // Populate the items in the table
-                            let itemsHtml = '';
-                            data.items.forEach(item => {
-                                itemsHtml += `<tr>
-                                                <td>${item.item_name}</td>
-                                                <td>${item.qty}</td>
-                                              </tr>`;
-                            });
-                            $('#view_request_items').html(itemsHtml); // Set items in the table
-
-                            // Show the modal
-                            $('#viewRequestModal').modal('show');
-                        } else {
-                            console.error("No data returned from the server.");
-                        }
+                        $('#requesterName').text(data.requester_name);
+                        $('#requesterDepartment').text(data.department);
+                        $('#requestDate').text(data.date_requested);
                     },
                     error: function (xhr, status, error) {
-                        console.error("Error fetching request details: ", error);
+                        console.error("Error fetching request items: ", error);
                     }
                 });
             });
@@ -372,64 +321,6 @@ $result = mysqli_query($conn, $query);
                 printWindow.close();
             });
         });
-
-        $(document).ready(function () {
-            let itemCount = 0; // Counter for item fields
-
-            // Function to add new item fields
-            $('#addItemButton').on('click', function () {
-                itemCount++; // Increment the item count
-                const newItemRow = `
-                    <div class="form-row item-row mb-3">
-                        <div class="form-group col-md-6">
-                            <label>Item</label>
-                            <input type="text" name="item[]" class="form-control" required>
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label>Quantity</label>
-                            <input type="number" name="qty[]" class="form-control" required>
-                        </div>
-                        <div class="form-group col-md-12">
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" name="warranty[]" value="1">
-                                <label class="form-check-label">With Warranty?</label>
-                            </div>
-                        </div>
-                        <button type="button" class="btn btn-danger btn-sm removeItem">Remove</button>
-                    </div>
-                `;
-                $('#itemFieldsContainer').append(newItemRow); // Append the new item row
-
-                // Add event listener to the remove button
-                $('.removeItem').last().on('click', function () {
-                    $(this).closest('.item-row').remove(); // Remove the item row
-                });
-            });
-
-            // Submit requisition button functionality
-            $('#submitRequisitionButton').on('click', function () {
-                // Gather form data and submit via AJAX or any other method
-                const formData = $('#addRequisitionForm').serialize(); // Serialize form data
-                console.log(formData); // For debugging, log the form data
-
-                // You can add your AJAX call here to submit the form data
-                $.ajax({
-                    url: 'requisition.php', 
-                    type: 'POST',
-                    data: formData,
-                    success: function(response) {
-                        // Handle success
-                        console.log("Requisition submitted successfully:", response);
-                        $('#addRequisitionModal').modal('hide'); // Hide the modal
-                        location.reload(); // Reload the page or update the UI as needed
-                    },
-                    error: function(xhr, status, error) {
-                        // Handle error
-                        console.error("Error submitting requisition:", error);
-                    }
-                });
-            });
-        });
     </script>
 
     <?php
@@ -437,5 +328,3 @@ $result = mysqli_query($conn, $query);
     include("../includes/footer.php");
     include("../includes/datatables.php");
     ?>
-
-   
