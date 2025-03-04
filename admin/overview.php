@@ -20,6 +20,7 @@ include("../includes/navbar_admin.php");
             stock_in.category,
             SUM(stock_in.qty) AS available_stock
         FROM stock_in 
+        WHERE stock_in.is_posted = 1
         GROUP BY stock_in.stockin_id, stock_in.item, stock_in.category";
         $result = mysqli_query($conn, $query);
         ?>

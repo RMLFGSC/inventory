@@ -17,7 +17,8 @@ if (isset($_POST['req_number'])) {
     while ($row = mysqli_fetch_assoc($result)) {
         echo "<tr>
                 <td>" . htmlspecialchars($row['item']) . "</td>
-                <td>" . htmlspecialchars($row['qty']) . "</td>
+                <td><input type='text' class='item-quantity' value='" . htmlspecialchars($row['qty']) . "' readonly></td>
+                <td><button class='edit-qty-btn'><i class='fa-solid fa-edit'></i></button></td>
               </tr>";
     }
 

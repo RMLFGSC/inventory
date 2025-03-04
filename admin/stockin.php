@@ -243,6 +243,25 @@ $result = mysqli_query($conn, $query);
         </div>
         <!-- end of edit modal -->
 
+        <!-- Confirmation Modal -->
+        <div class="modal fade" id="confirmPostModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Confirm Post</h5>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to finalize this stock-in? This action cannot be undone.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="confirmPostBtn">Confirm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
 
         <script>
@@ -297,6 +316,29 @@ $result = mysqli_query($conn, $query);
                         }
                     });
                 });
+                $(document).ready(function() {
+                    $("#postStockBtn").click(function() {
+                        $("#confirmPostModal").modal("show");
+                    });
+
+                    $("#confirmPostBtn").click(function() {
+                        window.location.href = "post_stockin.php";
+                    });
+                });
+
+                // Handle post button click
+                document.querySelectorAll('#postStockBtn').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const stockinId = this.getAttribute('data-stockin-id');
+                        // Show confirmation modal
+                        $('#confirmPostModal').modal('show');
+
+                        // Confirm post action
+                        document.getElementById('confirmPostBtn').onclick = function() {
+                            window.location.href = `post_stockin.php?stockin_id=${stockinId}`;
+                        };
+                    });
+                });
             });
         </script>
 
@@ -336,12 +378,20 @@ $result = mysqli_query($conn, $query);
                                         <td><?php echo $row['qty']; ?></td>
                                         <td><?php echo $row['dr']; ?></td>
                                         <td>
-                                            <button type="button" data-bs-toggle="modal" data-bs-target="#GMCeditStockin" class="btn btn-sm btn-success edit-btn"><i class="fa-solid fa-edit"></i></button>
-                                            <button type="button" data-toggle="modal" data-target="#viewModal" class="btn btn-sm btn-warning view-btn"
-                                                data-controlno="<?php echo htmlspecialchars($row['controlNO']); ?>">
+                                            <?php if ($row['is_posted'] == 0): // Check if not posted 
+                                            ?>
+                                                <button type="button" data-bs-toggle="modal" data-bs-target="#GMCeditStockin" class="btn btn-sm btn-success edit-btn"><i class="fa-solid fa-edit"></i></button>
+                                            <?php endif; ?>
+                                            <button type="button" data-toggle="modal" data-target="#viewModal" class="btn btn-sm btn-warning view-btn" data-controlno="<?php echo htmlspecialchars($row['controlNO']); ?>">
                                                 <i class="fa-solid fa-eye text-white"></i>
                                             </button>
-                                            <button type="button" data-bs-toggle="modal" data-bs-target="#confirmPostModal" class="btn btn-sm btn-info post-btn"><i class="fa-solid fa-square-check"></i></button>
+                                            <?php if ($row['is_posted'] == 0): // Check if not posted 
+                                            ?>
+                                                <button type="button" class="btn btn-sm btn-info" id="postStockBtn" data-stockin-id="<?php echo $row['stockin_id']; ?>">
+                                                    <i class="fas fa-square-check"></i>
+                                                </button>
+                                            <?php endif; ?>
+
                                         </td>
                                     </tr>
                                 <?php endwhile; ?>
@@ -362,6 +412,4 @@ $result = mysqli_query($conn, $query);
     include("../includes/scripts.php");
     include("../includes/footer.php");
     include("../includes/datatables.php");
-
-
     ?>
