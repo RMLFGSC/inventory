@@ -5,7 +5,7 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="../admin/index.php">
+                <a class="nav-link" href="../superusermmo/index.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
@@ -28,7 +28,7 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#auth2"
+                <a class="nav-link collapsed" href="" data-toggle="collapse" data-target="#auth2"
                     aria-expanded="true" aria-controls="collapseUtilities">
                     <i class="fas fa-fw fa-list-alt"></i>
                     <span>Requisition</span>
@@ -43,7 +43,7 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#auth3"
+                <a class="nav-link collapsed" href="issuance.php" data-toggle="collapse" data-target="#auth3"
                     aria-expanded="true" aria-controls="collapseUtilities">
                     <i class="fas fa-fw fa-share-square"></i>
                     <span>Issuance</span>
@@ -60,10 +60,22 @@
          
 
             <li class="nav-item">
-                <a class="nav-link" href="items.php">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#auth4"
+                    aria-expanded="true" aria-controls="collapseUtilities">
                     <i class="fas fa-fw fa-archive"></i>
-                    <span>Reports</span></a>
+                    <span>Reports</span>
+                </a>
+                <div id="auth4" class="collapse" aria-labelledby="headingUtilities"
+                    data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="reports-stockin.php">Stock-in</a>
+                        <a class="collapse-item" href="reports-requisition.php">Requisition</a>
+                        <a class="collapse-item" href="reports-issuance.php">Issuance</a>
+                </div>
             </li>
+
+
+        
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">

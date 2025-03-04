@@ -51,19 +51,17 @@ if (isset($_POST['addStockin'])) {
     $cat_name = $_POST['category'];
     $dop = $_POST['dop'];
     $dr = $_POST['dr'];
-    $item_names = $_POST['equipment_id'];
-    $models = $_POST['model'];
+    $item_names = $_POST['item'];
     $qtys = $_POST['qty'];
     $warranties = isset($_POST['warranty']) ? $_POST['warranty'] : [];
 
     for ($i = 0; $i < count($item_names); $i++) {
         $item = mysqli_real_escape_string($conn, $item_names[$i]);
-        $model = mysqli_real_escape_string($conn, $models[$i]);
         $qty = intval($qtys[$i]);
         $warranty = in_array($i + 1, $warranties) ? 1 : 0; 
 
-        $query = "INSERT INTO stockin (controlNO, equipment_id, model, category, qty, dop, dr, warranty) 
-                  VALUES ('$controlNO', '$item', '$model', '$cat_name', '$qty', '$dop', '$dr', '$warranty')";
+        $query = "INSERT INTO stockin (controlNO, item, category, qty, dop, dr, warranty) 
+                  VALUES ('$controlNO', '$item', '$cat_name', '$qty', '$dop', '$dr', '$warranty')";
         
         $query_run = mysqli_query($conn, $query);
 
@@ -84,8 +82,7 @@ if (!isset($_SESSION['auth_user']['user_id'])) {
 }
 
 if (isset($_POST['addRequest'])) {
-    // Debugging: Check if form data is received
-    if (empty($_POST['equipment_id']) || empty($_POST['qty'])) {
+    if (empty($_POST['stockin_id']) || empty($_POST['qty'])) {
         $_SESSION['message'] = "No items selected for the request.";
         header("Location: requisitions.php");
         exit();
@@ -98,10 +95,9 @@ if (isset($_POST['addRequest'])) {
     $userQuery = "SELECT fullname, department FROM users WHERE user_id = '$user_id'";
     $user = mysqli_fetch_assoc(mysqli_query($conn, $userQuery));
     
-    // Get the user's name and department
     $department = $user['department'];
 
-    $items = $_POST['equipment_id']; 
+    $items = $_POST['stockin_id'];
     $qtys = $_POST['qty']; 
     $status = 0; 
     $date = date('Y-m-d'); 
@@ -111,21 +107,21 @@ if (isset($_POST['addRequest'])) {
         $item = mysqli_real_escape_string($conn, $item);
         $qty = intval($qtys[$index]);
 
-        // Check if the equipment name exists in the equipment table
-        $checkQuery = "SELECT equipment_id FROM equipment WHERE equip_name = '$item'";
+        // Check if the stockin item exists in the stockin table
+        $checkQuery = "SELECT stockin_id FROM stockin WHERE stockin_id = '$item'";
         $checkResult = mysqli_query($conn, $checkQuery);
 
-        if ($equipmentRow = mysqli_fetch_assoc($checkResult)) {
+        if ($stockinRow = mysqli_fetch_assoc($checkResult)) {
             // Insert each item with the same req_number
-            $query = "INSERT INTO request (req_number, user_id, equipment_id, qty, department, date, status) 
-                      VALUES ('$req_number', '$user_id', '{$equipmentRow['equipment_id']}', '$qty', '$department', '$date', '$status')";
+            $query = "INSERT INTO request (req_number, user_id, stockin_id, qty, department, date, status) 
+                      VALUES ('$req_number', '$user_id', '{$stockinRow['stockin_id']}', '$qty', '$department', '$date', '$status')";
             
             if (!mysqli_query($conn, $query)) {
                 echo "Error: " . mysqli_error($conn);
                 exit(); 
             }
         } else {
-            echo "Error: Equipment '$item' does not exist.";
+            echo "Error: Stockin item '$item' does not exist.";
             exit(); 
         }
     }

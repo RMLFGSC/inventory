@@ -15,13 +15,12 @@ include("../includes/navbar_mmo.php");
 
         // Updated query to fetch stock information from stockin with item name and category
         $query = "SELECT 
-            e.equip_name AS item_name,
+            s.item,  -- Assuming stockin has an item_name column
             s.category,
             SUM(s.qty) AS available_stock
         FROM stockin s 
-        JOIN equipment e ON s.equipment_id = e.equipment_id
-        GROUP BY e.equip_name, s.category
-        ORDER BY e.equip_name ASC"; // Adjust the order as needed
+        GROUP BY s.item, s.category
+        ORDER BY s.item ASC"; // Adjust the order as needed
         $result = mysqli_query($conn, $query);
         ?>
 
@@ -47,7 +46,7 @@ include("../includes/navbar_mmo.php");
                             <tbody>
                                 <?php while ($row = mysqli_fetch_assoc($result)): ?>
                                     <tr>
-                                        <td><?php echo htmlspecialchars($row['item_name']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['item']); ?></td>
                                         <td><?php echo htmlspecialchars($row['category']); ?></td>
                                         <td><?php echo htmlspecialchars($row['available_stock']); ?></td>
                                     </tr>
