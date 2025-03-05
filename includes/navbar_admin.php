@@ -53,7 +53,7 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="items.php">
+                <a class="nav-link" href="reports.php">
                     <i class="fas fa-fw fa-archive"></i>
                     <span>Reports</span></a>
             </li>

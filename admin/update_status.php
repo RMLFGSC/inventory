@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Check if the request ID and status are valid
     if ($requestId > 0 && ($status === 1 || $status === 2)) { 
         // Prepare the SQL statement to update the status
-        $query = "UPDATE request SET status = ? WHERE req_id = ?";
+        $query = "UPDATE request SET status = ? WHERE req_number = (SELECT req_number FROM request WHERE req_id = ?)";
         $stmt = $conn->prepare($query);
         $stmt->bind_param("ii", $status, $requestId);
 
