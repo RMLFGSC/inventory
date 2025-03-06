@@ -226,7 +226,7 @@ if (!$result) {
                             let itemsHtml = '';
                             data.items.forEach(item => {
                                 itemsHtml += `<tr>
-                                                <td>${item.equip_name}</td>
+                                                <td>${item.item}</td>
                                                 <td>${item.qty}</td>
                                               </tr>`;
                             });

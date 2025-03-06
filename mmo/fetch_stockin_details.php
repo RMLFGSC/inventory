@@ -69,7 +69,4 @@ if (isset($_POST['stockin_id'])) {
     $stmt->close();
 }
 $conn->close();
-
-
-
 ?>

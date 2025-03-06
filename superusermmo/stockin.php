@@ -301,16 +301,17 @@ $result = mysqli_query($conn, $query);
                             success: function(data) {
                                 const stockinData = JSON.parse(data);
                                 console.log(stockinData); // Check the parsed data
+                                
                                 if (stockinData && stockinData.items.length > 0) {
                                     // Clear previous item fields
                                     $('#editItemFields').empty(); // Clear the item fields
 
-                                    // Populate the fields with the first item's data
-                                    document.getElementById('editStockinId').value = stockinData.items[0].stockin_id || ''; 
-                                    document.getElementById('editCategory').value = stockinData.items[0].category || '';
-                                    document.getElementById('editDop').value = stockinData.items[0].dop || '';
-                                    document.getElementById('editDr').value = stockinData.items[0].dr || '';
-                                    document.getElementById('editWarranty').checked = stockinData.items[0].warranty == 1;
+                                    // Populate the fields with the first item's data (basic info)
+                                    document.getElementById('editStockinId').value = stockinData.stockin_id || ''; 
+                                    document.getElementById('editCategory').value = stockinData.category || '';
+                                    document.getElementById('editDop').value = stockinData.dop || '';
+                                    document.getElementById('editDr').value = stockinData.dr || '';
+                                    document.getElementById('editWarranty').checked = stockinData.warranty == 1;
 
                                     // Populate the items in the item fields
                                     stockinData.items.forEach(item => {
@@ -346,6 +347,7 @@ $result = mysqli_query($conn, $query);
                         });
                     });
                 });
+
 
                 // Event listener for the "Add Item" button in the Edit Modal
                 document.getElementById('addItemEdit').addEventListener('click', function() {

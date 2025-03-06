@@ -27,20 +27,7 @@
                 </div>
             </li>
 
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="" data-toggle="collapse" data-target="#auth2"
-                    aria-expanded="true" aria-controls="collapseUtilities">
-                    <i class="fas fa-fw fa-list-alt"></i>
-                    <span>Requisition</span>
-                </a>
-                <div id="auth2" class="collapse" aria-labelledby="headingUtilities"
-                    data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="requisitions.php">Manage Requisition</a>
-                        <!-- <a class="collapse-item" href="reqhistory.php">Requisition History</a> -->
-                    </div>
-                </div>
-            </li>
+           
 
             <li class="nav-item">
                 <a class="nav-link collapsed" href="issuance.php" data-toggle="collapse" data-target="#auth3"

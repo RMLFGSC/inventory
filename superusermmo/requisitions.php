@@ -65,10 +65,10 @@ if (!$result) {
                                                 <label>Item</label>
                                                 <select name="stockin_id[]" class="form-control" required>
                                                     <?php
-                                                    $itemQuery = "SELECT stockin_idFROM stockin";
+                                                    $itemQuery = "SELECT item FROM stockin";
                                                     $itemResult = mysqli_query($conn, $itemQuery);
                                                     while ($itemRow = mysqli_fetch_assoc($itemResult)) {
-                                                        echo '<option value="' . htmlspecialchars($itemRow['stockin_id']) ;
+                                                        echo '<option value="' . htmlspecialchars($itemRow['item']) . '">' . htmlspecialchars($itemRow['item']) . '</option>';
                                                     }
                                                     ?>
                                                 </select>
@@ -230,10 +230,10 @@ if (!$result) {
                         <select name="stockin_id[]" class="form-control" required>
                             <?php
                             // Fetch items from stockin table
-                            $itemQuery = "SELECT stockin_id, item FROM stockin";
+                            $itemQuery = "SELECT item FROM stockin";
                             $itemResult = mysqli_query($conn, $itemQuery);
                             while ($itemRow = mysqli_fetch_assoc($itemResult)) {
-                                echo '<option value="' . htmlspecialchars($itemRow['stockin_id']) . '">' . htmlspecialchars($itemRow['item']) . '</option>';
+                                echo '<option value="' . htmlspecialchars($itemRow['item']) . '">' . htmlspecialchars($itemRow['item']) . '</option>';
                             }
                             ?>
                         </select>
@@ -291,89 +291,86 @@ if (!$result) {
             });
 
             document.getElementById('printRequest').addEventListener('click', function () {
-                const printContents = `
-                    <html>
-                    <head>
-                        <title>.</title>
-                        <style>
-                            body { 
-                                font-family: 'Arial', sans-serif; 
-                                margin: 20px; 
-                                color: #333; 
-                                background-color: #f9f9f9; 
-                            }
-                            h2 { 
-                                text-align: center; 
-                                color: #4A4A4A; 
-                                margin-bottom: 10px; 
-                            }
-                            .header {
-                                text-align: center; 
-                                margin-bottom: 20px; 
-                                border-bottom: 2px solid #76a73c; 
-                                padding-bottom: 10px; 
-                            }
-                            table { 
-                                width: 100%; 
-                                border-collapse: collapse; 
-                                margin-top: 20px; 
-                                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
-                            }
-                            th, td { 
-                                border: 1px solid #ddd; 
-                                padding: 12px; 
-                                text-align: left; 
-                            }
-                            th { 
-                                background-color: #76a73c; 
-                                color: white; 
-                                font-weight: bold; 
-                            }
-                            tr:nth-child(even) { 
-                                background-color: #f2f2f2; 
-                            }
-                            p { 
-                                margin: 5px 0; 
-                                text-align: center; 
-                            }
-                            .footer {
-                                text-align: center; 
-                                margin-top: 20px; 
-                                font-size: 12px; 
-                                color: #777; 
-                            }
-                        </style>
-                    </head>
-                    <body>
-                        <div class="header">
-                            <h2>Requisition Form</h2>
-                            <p><strong>Requested By:</strong> ${document.getElementById('requestedBy').value}</p>
-                            <p><strong>Department:</strong> ${document.getElementById('department').value}</p>
-                            <p><strong>Date:</strong> ${document.getElementById('date').value}</p>
-                        </div>
-                        <div class="table-responsive">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Items</th>
-                                        <th>Qty</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${document.querySelector('#requestDetailsBody').innerHTML}
-                                </tbody>
-                            </table>
-                        </div>
-                    </body>
-                    </html>
-                `;
+    const printContents = `
+        <html>
+        <head>
+            <title>Requisition Form</title>
+            <style>
+                body { 
+                    font-family: 'Times New Roman', serif; 
+                    margin: 50px; 
+                    background-color: #f7f7f7; 
+                }
+                h2 { 
+                    color: #333; 
+                    text-align: left; /* Text aligned left */
+                    margin-bottom: 30px; 
+                    font-weight: bold; 
+                    border-bottom: 2px solid #ccc; 
+                    padding-bottom: 10px;
+                }
+                p { 
+                    margin: 12px 0; 
+                    text-align: left; /* Text aligned left */
+                    color: #555; 
+                    font-size: 16px; 
+                }
+                .header { 
+                    text-align: left; /* Text aligned left */
+                    margin-bottom: 40px; 
+                }
+                table { 
+                    width: 90%; 
+                    margin: 40px auto; 
+                    border-collapse: collapse; 
+                    /* Removed box-shadow */
+                }
+                th, td { 
+                    padding: 15px 20px; 
+                    text-align: left; 
+                    font-size: 16px; 
+                    border: 1px solid #ddd;
+                }
+                th { 
+                    background-color: #f0f0f0; 
+                    color: #333; 
+                    font-weight: bold; 
+                }
+                .table-responsive { 
+                    overflow-x: auto; 
+                }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <h2>Requisition Form</h2>
+                <p><strong>Requested By:</strong> ${document.getElementById('requestedBy').value}</p>
+                <p><strong>Department:</strong> ${document.getElementById('department').value}</p>
+                <p><strong>Date:</strong> ${document.getElementById('date').value}</p>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Items</th>
+                            <th>Qty</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${document.querySelector('#requestDetailsBody').innerHTML}
+                    </tbody>
+                </table>
+            </div>
+        </body>
+        </html>
+    `;
 
-                const printWindow = window.open('', '', 'height=600,width=800');
-                printWindow.document.write(printContents);
-                printWindow.document.close();
-                printWindow.print();
-                printWindow.close();
-            });
+    const printWindow = window.open('', '', 'height=800,width=1000');
+    printWindow.document.write(printContents);
+    printWindow.document.close();
+    printWindow.print();
+    printWindow.close();
+});
         });
     </script>
 

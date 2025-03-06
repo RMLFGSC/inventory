@@ -49,24 +49,4 @@ if (isset($_POST['req_number'])) {
     mysqli_stmt_close($stmt);
 }
 
-if (isset($_POST['stockin_id'])) {
-    $stockinId = $_POST['stockin_id'];
-
-    // Prepare the SQL statement to prevent SQL injection
-    $stmt = $conn->prepare("SELECT * FROM stockin WHERE stockin_id = ?");
-    $stmt->bind_param("i", $stockinId);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    // Check if any rows were returned
-    if ($result->num_rows > 0) {
-        $stockinData = $result->fetch_assoc();
-        echo json_encode($stockinData); // Return the data as JSON
-    } else {
-        echo json_encode([]); // Return an empty array if no data found
-    }
-
-    $stmt->close();
-}
-$conn->close();
 ?>

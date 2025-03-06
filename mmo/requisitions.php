@@ -294,7 +294,7 @@ if (!$result) {
                 const printContents = `
                     <html>
                     <head>
-                        <title>Print</title>
+                        <title>.</title>
                         <style>
                             body { font-family: Arial, sans-serif; margin: 20px; }
                             h1, h2, h3, h4, h5, h6 { color: #333; text-align: center; }
