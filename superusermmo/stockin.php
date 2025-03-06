@@ -291,29 +291,53 @@ $result = mysqli_query($conn, $query);
                 // Event listener for edit buttons
                 document.querySelectorAll('.edit-btn').forEach(button => {
                     button.addEventListener('click', function() {
-                        const stockinId = this.getAttribute('data-stockin-id');
+                        const controlNo = this.getAttribute('data-controlno'); // Use controlNO
 
                         // Fetch existing data using AJAX
                         $.ajax({
-                            url: 'fetch_stockin_details.php',
+                            url: 'fetch_stockin_edit.php',
                             type: 'POST',
-                            data: { stockin_id: stockinId },
+                            data: { controlNO: controlNo },
                             success: function(data) {
                                 const stockinData = JSON.parse(data);
-                                console.log(stockinData); // Debugging line to check the structure of the data
-                                if (stockinData && stockinData.stockin_id) {
-                                    document.getElementById('editStockinId').value = stockinData.stockin_id;
-                                    document.getElementById('editItemName').value = stockinData.item; 
-                                    document.getElementById('editQty').value = stockinData.qty;
-                                    document.getElementById('editCategory').value = stockinData.category;
-                                    document.getElementById('editDop').value = stockinData.dop;
-                                    document.getElementById('editDr').value = stockinData.dr;
-                                    document.getElementById('editWarranty').checked = stockinData.warranty == 1;
+                                console.log(stockinData); // Check the parsed data
+                                if (stockinData && stockinData.items.length > 0) {
+                                    // Clear previous item fields
+                                    $('#editItemFields').empty(); // Clear the item fields
+
+                                    // Populate the fields with the first item's data
+                                    document.getElementById('editStockinId').value = stockinData.items[0].stockin_id || ''; 
+                                    document.getElementById('editCategory').value = stockinData.items[0].category || '';
+                                    document.getElementById('editDop').value = stockinData.items[0].dop || '';
+                                    document.getElementById('editDr').value = stockinData.items[0].dr || '';
+                                    document.getElementById('editWarranty').checked = stockinData.items[0].warranty == 1;
+
+                                    // Populate the items in the item fields
+                                    stockinData.items.forEach(item => {
+                                        $('#editItemFields').append(`
+                                            <div class="form-row item-row mb-3">
+                                                <div class="form-group col-md-6 col-12">
+                                                    <label>Item</label>
+                                                    <input type="text" name="item[]" class="form-control" value="${item.item_name}" required>
+                                                </div>
+                                                <div class="form-group col-md-6 col-12">
+                                                    <label>Quantity</label>
+                                                    <input type="number" name="qty[]" class="form-control" value="${item.qty}" required>
+                                                </div>
+                                                <div class="form-group col-md-12">
+                                                    <div class="form-check">
+                                                        <input type="checkbox" class="form-check-input" name="warranty[]" value="1" ${item.warranty == 1 ? 'checked' : ''}>
+                                                        <label class="form-check-label">With Warranty?</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        `);
+                                    });
 
                                     // Show the modal
                                     $('#editModal').modal('show');
                                 } else {
-                                    console.error("No data found for the given stockin_id.");
+                                    console.error("No data found for the given controlNO.");
                                 }
                             },
                             error: function(xhr, status, error) {
@@ -391,7 +415,7 @@ $result = mysqli_query($conn, $query);
                                         <td><?php echo $row['qty']; ?></td>
                                         <td><?php echo $row['dr']; ?></td>
                                         <td>
-                                            <button type="button" data-bs-toggle="modal" data-bs-target="#editModal" class="btn btn-sm btn-success edit-btn" data-stockin-id="<?php echo $row['stockin_id']; ?>">
+                                            <button type="button" data-bs-toggle="modal" data-bs-target="#editModal" class="btn btn-sm btn-success edit-btn" data-controlno="<?php echo htmlspecialchars($row['controlNO']); ?>">
                                                 <i class="fa-solid fa-edit"></i>
                                             </button>
                                             <button type="button" data-toggle="modal" data-target="#viewModal" class="btn btn-sm btn-warning view-btn"

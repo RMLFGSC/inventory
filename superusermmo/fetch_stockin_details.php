@@ -1,7 +1,7 @@
 <?php
 include("../dbconn/conn.php");
 
-
+// Check if control number is set in the POST request
 if (isset($_POST['controlNO'])) {
     $controlNO = $_POST['controlNO'];
 
@@ -69,7 +69,4 @@ if (isset($_POST['stockin_id'])) {
     $stmt->close();
 }
 $conn->close();
-
-
-
 ?>

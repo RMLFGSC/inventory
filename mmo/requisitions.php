@@ -6,23 +6,24 @@ if (!isset($_SESSION['auth_user']['user_id'])) {
     die("Error: User is not logged in. Please log in first.");
 }
 
-// Query to fetch only pending requisition requests along with stockin items
-$query = "SELECT request.req_number, 
-                 request.date, 
-                 request.status, 
-                 users.fullname AS requester_name, 
-                 users.department,
-                 stockin.stockin_id,  
-                 stockin.item     
+// Query to fetch requisition requests (only pending and approved)
+$query = "SELECT request.req_number, request.date, request.status, users.fullname AS requester_name, users.department
           FROM request 
           JOIN users ON request.user_id = users.user_id
-          JOIN stockin ON request.stockin_id = stockin.stockin_id  
-          WHERE request.status = 0 
-          AND request.req_id IN (SELECT MIN(req_id) 
-                                 FROM request 
-                                 GROUP BY req_number)
-          ORDER BY request.req_id DESC";
+          WHERE request.req_id IN (SELECT MIN(req_id) 
+          FROM request 
+          GROUP BY req_number)
+          AND request.status IN (0, 1)  
+          ORDER BY 
+              CASE 
+                  WHEN request.status = 0 THEN 0 
+                  ELSE 1 
+              END, 
+              request.date DESC"; 
 $result = mysqli_query($conn, $query);
+if (!$result) {
+    die("Database query failed: " . mysqli_error($conn));
+}
 ?>
 
 <!-- Content Wrapper -->
@@ -31,14 +32,11 @@ $result = mysqli_query($conn, $query);
     <!-- Main Content -->
     <div id="content">
 
-        <!-- topbar -->
-        <?php
-        include("../includes/topbar.php");
-        ?>
+        <!-- Topbar -->
+        <?php include("../includes/topbar.php"); ?>
 
         <!-- ADD MODAL -->
-        <div class="modal fade" id="GMCaddRequest" tabindex="-1" role="dialog" aria-labelledby="RequestModalLabel"
-            aria-hidden="true">
+        <div class="modal fade" id="GMCaddRequest" tabindex="-1" role="dialog" aria-labelledby="RequestModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -62,32 +60,32 @@ $result = mysqli_query($conn, $query);
                                         echo $req_number; ?>" readonly>
                                     </div>
                                     <div id="itemFields">
-                                        <div class="form-row">
+                                        <div class="form-row">  
                                             <div class="form-group col-md-6">
                                                 <label>Item</label>
                                                 <select name="stockin_id[]" class="form-control" required>
                                                     <?php
-                                                    $itemQuery = "SELECT stockin_id, item FROM stockin";
+                                                    $itemQuery = "SELECT item FROM stockin";
                                                     $itemResult = mysqli_query($conn, $itemQuery);
                                                     while ($itemRow = mysqli_fetch_assoc($itemResult)) {
-                                                        echo '<option value="' . htmlspecialchars($itemRow['stockin_id']) . '">' . htmlspecialchars($itemRow['item']) . '</option>';
+                                                        echo '<option value="' . htmlspecialchars($itemRow['item']) . '">' . htmlspecialchars($itemRow['item']) . '</option>';
                                                     }
                                                     ?>
                                                 </select>
                                             </div>
                                             <div class="form-group col-md-6">
                                                 <label>Quantity</label>
-                                                <input type="number" name="qty[]" class="form-control" required>
+                                                <input type="text" name="qty[]" class="form-control" required>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="mt-3 text-center">
-                                        <button type="button" class="btn btn-sm btn-secondary" id="addRequest">Add
-                                            Item</button>
+                                        <button type="button" class="btn btn-sm btn-secondary" id="addRequest">Add Item</button>
                                     </div>
 
                                     <hr>
+
                                 </div>
                             </div>
                         </div>
@@ -100,14 +98,14 @@ $result = mysqli_query($conn, $query);
                 </div>
             </div>
         </div>
-        <!-- end of add modal -->
+        <!-- End of Add Modal -->
 
-        <!-- View Request Modal -->
-        <div class="modal fade" id="viewRequestModal" tabindex="-1" role="dialog" aria-labelledby="viewRequestModalLabel" aria-hidden="true">
+        <!-- Start of View Modal -->
+        <div class="modal fade" id="viewRequestModal" tabindex="-1" role="dialog" aria-labelledby="viewStockinModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="viewRequestModalLabel">Requisition Details</h5>
+                        <h5 class="modal-title" id="viewStockinModalLabel">Requisition Details</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -116,21 +114,21 @@ $result = mysqli_query($conn, $query);
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label>Requested By</label>
-                                <input type="text" id="requestedBy" class="form-control" readonly>
+                                <input type="text" id="requestedBy" name="fullname" class="form-control" readonly>
                             </div>
                             <div class="col-md-6">
                                 <label>Department</label>
-                                <input type="text" id="department" class="form-control" readonly>
+                                <input type="text" id="department" name="department" class="form-control" readonly>
                             </div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label>Requisition #</label>
-                                <input type="text" id="requisitionNumber" class="form-control" readonly>
+                                <input type="text" id="requisitionNumber" name="req_number" class="form-control" readonly>
                             </div>
                             <div class="col-md-6">
                                 <label>Date</label>
-                                <input type="text" id="date" class="form-control" readonly>
+                                <input type="text" id="date" name="date" class="form-control" readonly>
                             </div>
                         </div>
                         <div class="table-responsive">
@@ -141,19 +139,20 @@ $result = mysqli_query($conn, $query);
                                         <th>Qty</th>
                                     </tr>
                                 </thead>
-                                <tbody id="view_request_items">
-                                    
+                                <tbody id="requestDetailsBody">
+                                    <!-- Dynamic content will be inserted here -->
                                 </tbody>
                             </table>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-sm btn-primary" id="printRequest">Print</button>
+                        <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- End of View Request Modal -->
+        <!-- End of View Modal -->
 
         <div class="container-fluid">
             <!-- Page Heading -->
@@ -183,10 +182,10 @@ $result = mysqli_query($conn, $query);
                             <tbody>
                                 <?php while ($row = mysqli_fetch_assoc($result)): ?>
                                     <tr>
-                                        <td><?php echo htmlspecialchars($row['req_number']); ?></td>
-                                        <td><?php echo htmlspecialchars($row['requester_name']); ?></td>
-                                        <td><?php echo htmlspecialchars($row['department']); ?></td>
-                                        <td><?php echo htmlspecialchars($row['date']); ?></td>
+                                        <td><?php echo $row['req_number']; ?></td>
+                                        <td><?php echo $row['requester_name']; ?></td>
+                                        <td><?php echo $row['department']; ?></td>
+                                        <td><?php echo $row['date']; ?></td>
                                         <td>
                                             <?php
                                             if ($row['status'] == 0) {
@@ -198,11 +197,10 @@ $result = mysqli_query($conn, $query);
                                             }
                                             ?>
                                         </td>
+
                                         <td>
-                                            <button type="button" data-toggle="modal" data-target="#viewRequestModal"
-                                                class="btn btn-sm btn-warning viewrequest-btn"
-                                                data-req_number="<?php echo $row['req_number']; ?>">
-                                                <i class="fa-solid fa-eye"></i>
+                                            <button type="button" data-toggle="modal" data-target="#viewRequestModal" class="btn btn-sm btn-warning viewrequest-btn" data-req_number="<?php echo htmlspecialchars($row['req_number']); ?>">
+                                                <i class="fa-solid fa-eye text-white"></i>
                                             </button>
                                         </td>
                                     </tr>
@@ -227,24 +225,24 @@ $result = mysqli_query($conn, $query);
                 newItemRow.classList.add('form-row', 'item-row', 'mb-2');
 
                 newItemRow.innerHTML = `
-                        <div class="form-group col-md-6">
-                            <label>Item</label>
-                            <select name="stockin_id[]" class="form-control" required>
-                                <?php
-                                // Fetch items from stock_in table
-                                $itemQuery = "SELECT item FROM stock_in";
-                                $itemResult = mysqli_query($conn, $itemQuery);
-                                while ($itemRow = mysqli_fetch_assoc($itemResult)) {
-                                    echo '<option value="' . htmlspecialchars($itemRow['item']) . '">' . htmlspecialchars($itemRow['item']) . '</option>';
-                                }
-                                ?>
-                            </select>
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label>Quantity</label>
-                            <input type="text" name="qty[]" class="form-control" required>
-                        </div>
-                        <button type="button" class="btn btn-danger btn-sm removeItem">X</button>`;
+                    <div class="form-group col-md-6">
+                        <label>Item</label>
+                        <select name="stockin_id[]" class="form-control" required>
+                            <?php
+                            // Fetch items from stockin table
+                            $itemQuery = "SELECT item FROM stockin";
+                            $itemResult = mysqli_query($conn, $itemQuery);
+                            while ($itemRow = mysqli_fetch_assoc($itemResult)) {
+                                echo '<option value="' . htmlspecialchars($itemRow['item']) . '">' . htmlspecialchars($itemRow['item']) . '</option>';
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label>Quantity</label>
+                        <input type="text" name="qty[]" class="form-control" required>
+                    </div>
+                    <button type="button" class="btn btn-danger btn-sm removeItem">X</button>`;
 
                 itemFields.appendChild(newItemRow);
 
@@ -257,65 +255,83 @@ $result = mysqli_query($conn, $query);
             $('.viewrequest-btn').on('click', function () {
                 const reqno = $(this).data('req_number');
 
-                // ajax to fetch the details of the requisition
+                // AJAX call to fetch the requisition details
                 $.ajax({
-                    url: 'fetch_request_items.php',
+                    url: 'fetch_requisition_details.php',
                     type: 'POST',
                     data: {
                         req_number: reqno
                     },
-                    success: function (data) {
-                        $('#requestDetailsBody').html(data);
+                    dataType: 'json', 
+                    success: function (data) {      
+                        console.log(data); 
+                        if (data) {
+                            $('#requestedBy').val(data.requester_name); 
+                            $('#department').val(data.department); 
+                            $('#requisitionNumber').val(data.req_number); 
+                            $('#date').val(data.date); 
 
-                        $('#requesterName').text(data.requester_name);
-                        $('#requesterDepartment').text(data.department);
-                        $('#requestDate').text(data.date_requested);
+                            // Populate the items in the table
+                            let itemsHtml = '';
+                            data.items.forEach(item => {
+                                itemsHtml += `<tr>
+                                                <td>${item.item}</td>
+                                                <td>${item.qty}</td>
+                                              </tr>`;
+                            });
+                            $('#requestDetailsBody').html(itemsHtml); // Set items in the table
+                        } else {
+                            console.error("No data returned from the server.");
+                        }
                     },
                     error: function (xhr, status, error) {
-                        console.error("Error fetching request items: ", error);
+                        console.error("Error fetching requisition details: ", error);
                     }
                 });
             });
 
             document.getElementById('printRequest').addEventListener('click', function () {
                 const printContents = `
-                <div style="text-align: center;">
-                    <img src="path/to/your/logo.png" alt="Logo" style="width: 150px; height: auto; margin-bottom: 20px;">
-                    <h2>Requisition Form</h2>
-                    <p><strong>Requested By:</strong> <span id="requesterName"></span></p>
-                    <p><strong>Department:</strong> <span id="requesterDepartment"></span></p>
-                    <p><strong>Date:</strong> <span id="requestDate"></span></p>
-                    <hr>
-                </div>
-                <div class="table-responsive">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Items</th>
-                                <th>Qty</th>
-                            </tr>
-                        </thead>
-                        <tbody id="requestDetailsBody">
-                            ${document.querySelector('#requestDetailsBody').innerHTML}
-                        </tbody>
-                    </table>
-                </div>
-        `;
+                    <html>
+                    <head>
+                        <title>Print</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; margin: 20px; }
+                            h1, h2, h3, h4, h5, h6 { color: #333; text-align: center; }
+                            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                            th { background-color: #f2f2f2; }
+                            p { margin: 5px 0; text-align: center; }
+                            .header { text-align: center; margin-bottom: 20px; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="header">
+                            <h2>Requisition Form</h2>
+                            <p><strong>Requested By:</strong> ${document.getElementById('requestedBy').value}</p>
+                            <p><strong>Department:</strong> ${document.getElementById('department').value}</p>
+                            <p><strong>Date:</strong> ${document.getElementById('date').value}</p>
+                            <hr>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Items</th>
+                                        <th>Qty</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${document.querySelector('#requestDetailsBody').innerHTML}
+                                </tbody>
+                            </table>
+                        </div>
+                    </body>
+                    </html>
+                `;
 
                 const printWindow = window.open('', '', 'height=600,width=800');
-                printWindow.document.write('<html><head><title>Print</title>');
-                printWindow.document.write('<style>');
-                printWindow.document.write('body { font-family: Arial, sans-serif; margin: 20px; }');
-                printWindow.document.write('h1, h2, h3, h4, h5, h6 { color: #333; text-align: center; }');
-                printWindow.document.write('table { width: 100%; border-collapse: collapse; margin-top: 20px; }');
-                printWindow.document.write('th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }');
-                printWindow.document.write('th { background-color: #f2f2f2; }');
-                printWindow.document.write('p { margin: 5px 0; text-align: center; }');
-                printWindow.document.write('</style>');
-                printWindow.document.write('</head><body>');
                 printWindow.document.write(printContents);
-                printWindow.document.write('</body></html>');
-
                 printWindow.document.close();
                 printWindow.print();
                 printWindow.close();

@@ -3,23 +3,7 @@ session_start();
 include("../dbconn/conn.php");
 
 
-//START OF INSERTING CATEGORY
-if (isset($_POST['addEquipment'])) {
-    $equipName = $_POST['equip_name'];
-    $category = $_POST['category'];
 
-    $query = "INSERT INTO equipment (equip_name, category) VALUES ('$equipName', '$category') ";
-
-    $query_run = mysqli_query($conn, $query);
-
-    if ($query_run) {
-        $_SESSION['toast_message'] = "Equipment Added Successfully";
-        header("Location: equipment.php");
-    } else {
-        $_SESSION['message'] = "Equipment not added";
-        header("Location: equipment.php");
-    }
-}
 
 //start of fixed asset
 // if (isset($_POST['addMR'])) {

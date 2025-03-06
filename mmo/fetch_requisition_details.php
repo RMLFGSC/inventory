@@ -5,7 +5,7 @@ if (isset($_POST['req_number'])) {
     $req_number = $_POST['req_number'];
 
     // Query to fetch the requisition details along with stock-in items
-    $query = "SELECT r.req_number, r.date, u.fullname AS requester_name, u.department, s.item_name, r.qty 
+    $query = "SELECT r.req_number, r.date, u.fullname AS requester_name, u.department, s.item, r.qty 
               FROM request r 
               JOIN stockin s ON r.stockin_id = s.stockin_id 
               JOIN users u ON r.user_id = u.user_id 
