@@ -1,17 +1,17 @@
 <?php
 include("../includes/header.php");
-include("../includes/navbar_mmo.php");
+include("../includes/navbar_admin.php");
 
 // Fetch the last control number from the database
-$lastControlNoQuery = "SELECT controlNO FROM stockin ORDER BY stockin_id DESC LIMIT 1";
+$lastControlNoQuery = "SELECT controlNO FROM stock_in ORDER BY stockin_id DESC LIMIT 1";
 $lastControlNoResult = mysqli_query($conn, $lastControlNoQuery);
 $lastControlNo = mysqli_fetch_assoc($lastControlNoResult);
 $nextControlNo = isset($lastControlNo['controlNO']) ? intval(substr($lastControlNo['controlNO'], 3)) + 1 : 1; // Increment the last number
 $controlNumber = 'CN-' . $nextControlNo;
 
 //query
-$query = "SELECT * FROM stockin WHERE stockin_id IN 
-         (SELECT MIN(stockin_id) FROM stockin GROUP BY controlNO) ORDER BY stockin_id DESC";
+$query = "SELECT * FROM stock_in WHERE stockin_id IN 
+         (SELECT MIN(stockin_id) FROM stock_in GROUP BY controlNO) ORDER BY stockin_id DESC";
 $result = mysqli_query($conn, $query);
 
 ?>
@@ -35,6 +35,7 @@ $result = mysqli_query($conn, $query);
         <!-- topbar -->
         <?php
         include("../includes/topbar.php");
+
         ?>
 
         <!-- ADD MODAL -->
@@ -157,58 +158,27 @@ $result = mysqli_query($conn, $query);
         </div>
         <!--End of view modal-->
 
-<<<<<<< HEAD
-        <!-- Edit Modal -->
-        <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="editModalLabel">Edit Stock-in</h5>
-=======
         <!-- EDIT MODAL -->
         <div class="modal fade" id="GMCeditStockin" tabindex="-1" role="dialog" aria-labelledby="ItemModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="ItemModalLabel">Edit Stock-in Details</h5>
->>>>>>> 7e77c1e1957b9f8d933fc6415c2faea16ceb9f32
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-<<<<<<< HEAD
-                    <form id="editStockinForm" action="update.php" method="POST">
-                        <div class="modal-body">
-=======
 
                     <form action="edit.php" method="POST">
                         <div class="modal-body">
 
                             <input type="hidden" name="update_stockin_id" id="update_stockin_id">
 
->>>>>>> 7e77c1e1957b9f8d933fc6415c2faea16ceb9f32
                             <div class="card">
                                 <div class="card-header text-white" style="background-color: #76a73c;">
                                     <strong>Stock-in Items</strong>
                                 </div>
                                 <div class="card-body">
-<<<<<<< HEAD
-                                    <input type="hidden" name="stockin_id" id="editStockinId">
-                                    <div id="editItemFields">
-                                        <div class="form-row item-row mb-3">
-                                            <div class="form-group col-md-6 col-12">
-                                                <label>Item</label>
-                                                <input type="text" name="item[]" id="editItemName" class="form-control" required>
-                                            </div>
-                                            <div class="form-group col-md-6 col-12">
-                                                <label>Quantity</label>
-                                                <input type="number" name="qty[]" id="editQty" class="form-control" required>
-                                            </div>
-                                            <div class="form-group col-md-12">
-                                                <div class="form-check">
-                                                    <input type="checkbox" class="form-check-input" id="editWarranty" name="warranty[]" value="1">
-                                                    <label class="form-check-label" for="editWarranty">With Warranty?</label>
-=======
                                     <div id="itemFields">
                                         <div class="form-row item-row mb-3">
                                             <div class="form-group col-md-6 col-12">
@@ -223,47 +193,10 @@ $result = mysqli_query($conn, $query);
                                                 <div class="form-check">
                                                     <input type="checkbox" class="form-check-input" id="edit_warranty1" name="warranty[]" value="1">
                                                     <label class="form-check-label" for="warranty1">With Warranty?</label>
->>>>>>> 7e77c1e1957b9f8d933fc6415c2faea16ceb9f32
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-<<<<<<< HEAD
-
-                                    <div class="mt-3 text-center">
-                                        <button type="button" class="btn btn-sm btn-secondary" id="addItemEdit">Add Item</button>
-                                    </div>
-
-                                    <hr>
-
-                                    <div class="form-row">
-                                        <div class="form-group col-md-6 col-12">
-                                            <label for="category">Category</label>
-                                            <select class="custom-select" id="editCategory" name="category" aria-label="Default select example" required>
-                                                <option value="" selected disabled>Select Category</option>
-                                                <option value="IT Equipment">IT Equipment</option>
-                                                <option value="Engineering Equipment">Engineering Equipment</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group col-md-6 col-12">
-                                            <label>Date of Purchase</label>
-                                            <input type="date" name="dop" id="editDop" class="form-control" required>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-row">
-                                        <div class="form-group col-md-6 col-12">
-                                            <label>Date Received</label>
-                                            <input type="date" name="dr" id="editDr" class="form-control" required>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Update</button>
-=======
                                 </div>
                             </div>
 
@@ -303,23 +236,36 @@ $result = mysqli_query($conn, $query);
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                             <button type="submit" name="editStockinData" class="btn btn-primary">Update</button>
->>>>>>> 7e77c1e1957b9f8d933fc6415c2faea16ceb9f32
                         </div>
                     </form>
                 </div>
             </div>
         </div>
-<<<<<<< HEAD
-        <!-- End of Edit Modal -->
-=======
         <!-- end of edit modal -->
 
+        <!-- Confirmation Modal -->
+        <div class="modal fade" id="confirmPostModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Confirm Post</h5>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to finalize this stock-in? This action cannot be undone.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="confirmPostBtn">Confirm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
->>>>>>> 7e77c1e1957b9f8d933fc6415c2faea16ceb9f32
+
 
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                // Event listener for the "Add Item" button in the Add Modal
                 document.getElementById('addItem').addEventListener('click', function() {
                     const itemFields = document.getElementById('itemFields');
 
@@ -370,71 +316,27 @@ $result = mysqli_query($conn, $query);
                         }
                     });
                 });
+                $(document).ready(function() {
+                    $("#postStockBtn").click(function() {
+                        $("#confirmPostModal").modal("show");
+                    });
 
-                // Event listener for edit buttons
-                document.querySelectorAll('.edit-btn').forEach(button => {
-                    button.addEventListener('click', function() {
-                        const stockinId = this.getAttribute('data-stockin-id');
-
-                        // Fetch existing data using AJAX
-                        $.ajax({
-                            url: 'fetch_stockin_details.php',
-                            type: 'POST',
-                            data: { stockin_id: stockinId },
-                            success: function(data) {
-                                const stockinData = JSON.parse(data);
-                                console.log(stockinData); // Debugging line to check the structure of the data
-                                if (stockinData && stockinData.stockin_id) {
-                                    document.getElementById('editStockinId').value = stockinData.stockin_id;
-                                    document.getElementById('editItemName').value = stockinData.item; 
-                                    document.getElementById('editQty').value = stockinData.qty;
-                                    document.getElementById('editCategory').value = stockinData.category;
-                                    document.getElementById('editDop').value = stockinData.dop;
-                                    document.getElementById('editDr').value = stockinData.dr;
-                                    document.getElementById('editWarranty').checked = stockinData.warranty == 1;
-
-                                    // Show the modal
-                                    $('#editModal').modal('show');
-                                } else {
-                                    console.error("No data found for the given stockin_id.");
-                                }
-                            },
-                            error: function(xhr, status, error) {
-                                console.error("Error fetching stock-in details: ", error);
-                            }
-                        });
+                    $("#confirmPostBtn").click(function() {
+                        window.location.href = "post_stockin.php";
                     });
                 });
 
-                // Event listener for the "Add Item" button in the Edit Modal
-                document.getElementById('addItemEdit').addEventListener('click', function() {
-                    const itemFields = document.getElementById('editItemFields'); // Ensure this ID is correct
+                // Handle post button click
+                document.querySelectorAll('#postStockBtn').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const stockinId = this.getAttribute('data-stockin-id');
+                        // Show confirmation modal
+                        $('#confirmPostModal').modal('show');
 
-                    const newItemRow = document.createElement('div');
-                    newItemRow.classList.add('form-row', 'item-row', 'mb-3');
-
-                    newItemRow.innerHTML = `
-                        <div class="form-group col-md-6 col-12">
-                            <label>Item</label>
-                            <input type="text" name="item[]" class="form-control" required>
-                        </div>
-                        <div class="form-group col-md-6 col-12">
-                            <label>Quantity</label>
-                            <input type="number" name="qty[]" class="form-control" required>
-                        </div>
-                        <div class="form-group col-md-12">
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" name="warranty[]" value="1">
-                                <label class="form-check-label">With Warranty?</label>
-                            </div>
-                        </div>
-                        <button type="button" class="btn btn-danger btn-sm removeItem">Remove</button>
-                    `;
-
-                    itemFields.appendChild(newItemRow);
-
-                    newItemRow.querySelector('.removeItem').addEventListener('click', function() {
-                        itemFields.removeChild(newItemRow); // Remove the item row
+                        // Confirm post action
+                        document.getElementById('confirmPostBtn').onclick = function() {
+                            window.location.href = `post_stockin.php?stockin_id=${stockinId}`;
+                        };
                     });
                 });
             });
@@ -466,7 +368,9 @@ $result = mysqli_query($conn, $query);
                             </thead>
 
                             <tbody>
-                                <?php while ($row = mysqli_fetch_assoc($result)): ?>
+                                <?php
+
+                                while ($row = mysqli_fetch_assoc($result)): ?>
                                     <tr>
                                         <td><?php echo $row['controlNO']; ?></td>
                                         <td><?php echo $row['item']; ?></td>
@@ -474,18 +378,20 @@ $result = mysqli_query($conn, $query);
                                         <td><?php echo $row['qty']; ?></td>
                                         <td><?php echo $row['dr']; ?></td>
                                         <td>
-<<<<<<< HEAD
-                                            <button type="button" data-bs-toggle="modal" data-bs-target="#editModal" class="btn btn-sm btn-success edit-btn" data-stockin-id="<?php echo $row['stockin_id']; ?>">
-                                                <i class="fa-solid fa-edit"></i>
-                                            </button>
-=======
-                                            <button type="button" data-bs-toggle="modal" data-bs-target="#GMCeditStockin" class="btn btn-sm btn-success edit-btn"><i class="fa-solid fa-edit"></i></button>
->>>>>>> 7e77c1e1957b9f8d933fc6415c2faea16ceb9f32
-                                            <button type="button" data-toggle="modal" data-target="#viewModal" class="btn btn-sm btn-warning view-btn"
-                                                data-controlno="<?php echo htmlspecialchars($row['controlNO']); ?>">
+                                            <?php if ($row['is_posted'] == 0): // Check if not posted 
+                                            ?>
+                                                <button type="button" data-bs-toggle="modal" data-bs-target="#GMCeditStockin" class="btn btn-sm btn-success edit-btn"><i class="fa-solid fa-edit"></i></button>
+                                            <?php endif; ?>
+                                            <button type="button" data-toggle="modal" data-target="#viewModal" class="btn btn-sm btn-warning view-btn" data-controlno="<?php echo htmlspecialchars($row['controlNO']); ?>">
                                                 <i class="fa-solid fa-eye text-white"></i>
                                             </button>
-                                            <button type="button" data-bs-toggle="modal" data-bs-target="#confirmPostModal" class="btn btn-sm btn-info post-btn"><i class="fa-solid fa-square-check"></i></button>
+                                            <?php if ($row['is_posted'] == 0): // Check if not posted 
+                                            ?>
+                                                <button type="button" class="btn btn-sm btn-info" id="postStockBtn" data-stockin-id="<?php echo $row['stockin_id']; ?>">
+                                                    <i class="fas fa-square-check"></i>
+                                                </button>
+                                            <?php endif; ?>
+
                                         </td>
                                     </tr>
                                 <?php endwhile; ?>
@@ -498,6 +404,7 @@ $result = mysqli_query($conn, $query);
         </div>
         <!-- /.container-fluid -->
 
+
     </div>
     <!-- End of Main Content -->
 
@@ -506,4 +413,3 @@ $result = mysqli_query($conn, $query);
     include("../includes/footer.php");
     include("../includes/datatables.php");
     ?>
-</div>

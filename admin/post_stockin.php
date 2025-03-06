@@ -1,21 +1,30 @@
 <?php
-include("../dbconn/conn.php"); 
+session_start();
+include ("../dbconn/conn.php"); 
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $stockin_id = $_POST['stockin_id'];
-    $is_posted = $_POST['is_posted'];
+// Check if stockin_id is provided
+if (isset($_GET['stockin_id'])) {
+    $stockin_id = intval($_GET['stockin_id']);
 
-    $updateQuery = "UPDATE stock_in SET is_posted = ? WHERE stockin_id = ?";
-    $stmt = $conn->prepare($updateQuery);
-    $stmt->bind_param("ii", $is_posted, $stockin_id); 
+    $sql = "UPDATE stock_in SET is_posted = 1 WHERE stockin_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $stockin_id);
 
     if ($stmt->execute()) {
-        echo json_encode(["success" => true, "message" => "Stock-in updated successfully."]);
+        $_SESSION['success_message'] = "Stock-in successfully finalized!";
     } else {
-        echo json_encode(["success" => false, "message" => "Error updating stock-in: " . $stmt->error]);
+        $_SESSION['error_message'] = "Failed to finalize stock-in.";
     }
 
     $stmt->close();
     $conn->close();
+
+    // Redirect back to stock-in page
+    header("Location: stockin.php");
+    exit();
+} else {
+    $_SESSION['error_message'] = "Invalid stock-in request.";
+    header("Location: stockin.php");
+    exit();
 }
 ?>

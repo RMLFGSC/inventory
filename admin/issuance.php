@@ -62,6 +62,7 @@ $result = mysqli_query($conn, $query);
                                     <tr>
                                         <th>Items</th>
                                         <th>Qty</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody id="view_request_items">
@@ -273,6 +274,13 @@ $result = mysqli_query($conn, $query);
                         console.error("Error updating status: ", error);
                     }
                 });
+            });
+
+            // Edit quantity functionality
+            $(document).on('click', '.edit-qty-btn', function () {
+                const qtyInput = $(this).closest('tr').find('.item-quantity');
+                qtyInput.prop('readonly', false); // Make the quantity input editable
+                qtyInput.focus(); // Focus on the input for immediate editing
             });
         });
     </script>

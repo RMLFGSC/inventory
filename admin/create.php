@@ -128,7 +128,7 @@ if (isset($_POST['addRequest'])) {
         }
     }
 
-    $_SESSION['toast_message'] = "Request Added Successfully";
+    $_SESSION['message'] = "Request Added Successfully";
     header("Location: requisitions.php");
     exit();
 }

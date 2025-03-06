@@ -15,6 +15,13 @@ if (isset($_POST['login-btn']) && !empty($_POST['username']) && !empty($_POST['p
     if ($data = mysqli_fetch_assoc($result)) {
         $hashed_password = $data['pword'];
 
+        // Check if the user is hidden
+        if ($data['is_hide'] == 1) {
+            $_SESSION['message_ni'] = "bawal naka mo logged in et ni resign naka.";
+            header("Location: login.php");
+            exit(0);
+        }
+
         if (password_verify($password, $hashed_password)) {
             session_regenerate_id(true); 
 
@@ -36,7 +43,7 @@ if (isset($_POST['login-btn']) && !empty($_POST['username']) && !empty($_POST['p
                     header("Location: ../mmo/index.php");
                     break;
                 case 'engineering':
-                    header("Location: ../engineering/index.php");
+                    header("Location: ../engineering/issuance.php");
                     break;
                 case 'user':
                     header("Location: ../user/request.php");

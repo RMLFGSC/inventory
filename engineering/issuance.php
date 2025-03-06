@@ -1,6 +1,5 @@
 <?php
 include("../includes/header.php");
-include("../includes/navbar_eng.php");
 
 //query
 $query = "SELECT request.*, users.fullname AS requester_name, users.department, stock_in.item
@@ -9,7 +8,7 @@ $query = "SELECT request.*, users.fullname AS requester_name, users.department, 
           JOIN stock_in ON request.stockin_id = stock_in.stockin_id
           WHERE req_id IN (SELECT MIN(req_id) FROM request GROUP BY req_number) 
           AND stock_in.category = 'Engineering Equipment' 
-          ORDER BY req_number ASC";
+          ORDER BY status ASC, req_number DESC";
 $result = mysqli_query($conn, $query);
 ?>
 
@@ -21,7 +20,7 @@ $result = mysqli_query($conn, $query);
 
         <!-- topbar -->
         <?php
-        include("../includes/topbar.php");
+        include("../includes/topbar_eng.php");
         ?>
 
 
@@ -119,7 +118,12 @@ $result = mysqli_query($conn, $query);
             <!-- Page Heading -->
             <div class="d-sm-flex align-items-center justify-content-between mb-4">
                 <h1 class="h3 mb-0 text-gray-800">Issuance</h1>
-
+                <div class="ml-auto">
+                    <a href="issuance.php" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                    class="fas fa-file-signature fa-sm text-white-50"></i> Issuance</a>
+                    <a href="reports.php" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                    class="fas fa-chart-bar fa-sm text-white-50"></i> Reports</a>
+                </div>
             </div>
 
             <!-- DataTales Example -->

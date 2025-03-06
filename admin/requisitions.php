@@ -160,6 +160,7 @@ $result = mysqli_query($conn, $query);
             <!-- Page Heading -->
             <div class="d-sm-flex align-items-center justify-content-between mb-4">
                 <h1 class="h3 mb-0 text-gray-800">Requisitions</h1>
+
                 <button type="button" class="btn btn-sm btn-primary shadow-sm" data-toggle="modal"
                     data-target="#GMCaddRequest">
                     <i class="fas fa-plus fa-sm text-white-50"></i> Add Request
@@ -202,11 +203,15 @@ $result = mysqli_query($conn, $query);
                                         </td>
 
                                         <td>
+                                            <button type="button" class="btn btn-sm btn-success"><i class="fas fa-edit"></i>
+
+                                            </button>
                                             <button type="button" data-toggle="modal" data-target="#viewRequestModal"
                                                 class="btn btn-sm btn-warning viewrequest-btn"
                                                 data-req_number="<?php echo htmlspecialchars($row['req_number']); ?>">
                                                 <i class="fa-solid fa-eye text-white"></i>
                                             </button>
+                                            <button type="button" class="btn btn-sm btn-info"><i class="fas fa-square-check"></i>
 
                                         </td>
                                     </tr>

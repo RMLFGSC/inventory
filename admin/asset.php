@@ -14,7 +14,7 @@ include("../includes/navbar_admin.php");
         include("../includes/topbar.php");
 
         // query
-        $query = "SELECT * FROM fixed_asset";
+        $query = "SELECT * FROM asset";
         $result = mysqli_query($conn, $query);
         ?>
 
