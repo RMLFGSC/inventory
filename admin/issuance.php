@@ -62,7 +62,6 @@ $result = mysqli_query($conn, $query);
                                     <tr>
                                         <th>Items</th>
                                         <th>Qty</th>
-                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody id="view_request_items">
@@ -199,88 +198,131 @@ $result = mysqli_query($conn, $query);
     include("../includes/datatables.php");
     ?>
 
-    <script>
-        $(document).ready(function () {
-            // View request modal functionality
-            $('.viewrequest-btn').on('click', function () {
-                const reqno = $(this).data('req_number');
-                const reqId = $(this).data('id'); // Ensure this is set in the button
+<script>
+$(document).ready(function () {
+    // View request modal functionality
+    $('.viewrequest-btn').on('click', function () {
+        const reqno = $(this).data('req_number');
+        const reqId = $(this).data('id'); // Ensure this is set in the button
 
-                // Store the request ID inside the modal (so Save button can access it later)
-                $('#viewRequestModal').data('id', reqId);
+        // Store the request ID inside the modal (so Save button can access it later)
+        $('#viewRequestModal').data('id', reqId);
 
-                // Fetch request items via AJAX
-                $.ajax({
-                    url: 'fetch_request_items.php',
-                    type: 'POST',
-                    data: { req_number: reqno },
-                    success: function (data) {
-                        $('#view_request_items').html(data);
-                    },
-                    error: function (xhr, status, error) {
-                        console.error("Error fetching request items: ", error);
-                    }
-                });
-            });
+        // Fetch request items via AJAX
+        $.ajax({
+            url: 'fetch_request_items.php',
+            type: 'POST',
+            data: { req_number: reqno },
+            success: function (data) {
+                $('#view_request_items').html(data);
+            },
+            error: function (xhr, status, error) {
+                console.error("Error fetching request items: ", error);
+            }
+        });
+    });
 
-            // Decline button functionality
-            $('.btn-danger.viewrequest-btn').on('click', function () {
-                $('#confirmDeclineModal').modal('show');
+    $(document).ready(function () {
+    // Enable inline editing on quantity column when double-clicked
+    $('#view_request_items').on('dblclick', '.editable-qty', function () {
+        let currentElement = $(this);
+        let currentQty = currentElement.text().trim();
+        
+        // Get the status of the request
+        let rowStatus = currentElement.closest('tr').data('status'); 
 
-                const requestId = $(this).data('id');
+        // Check if the status is NOT pending (0)
+        if (rowStatus !== 0) {
+            console.log("Editing disabled: Status is not pending.");
+            return; // Stop here if it's not pending
+        }
 
-                // Handle confirmation
-                $('#confirmDecline').off('click').on('click', function () {
+        // Prevent multiple input fields
+        if (currentElement.find('input').length) return;
 
-                    $.ajax({
-                        url: 'update_status.php',
-                        type: 'POST',
-                        data: { id: requestId, status: 2 },
-                        success: function (response) {
+        // Replace text with input field
+        let inputField = $('<input>', {
+            type: 'number',
+            class: 'form-control edit-qty-input',
+            value: currentQty,
+            min: 1,
+            css: {
+                "width": "60px",
+                "max-width": "60px",
+                "padding": "2px",
+                "text-align": "center"
+            }
+        });
 
-                            location.reload();
-                        }
-                    });
-                    $('#confirmDeclineModal').modal('hide');
-                });
-            });
+        currentElement.html(inputField);
+        inputField.focus();
 
-            // Save button functionality (Update Status to Served)
-            $('#saveRequest').on('click', function () {
-                const requestId = $('#viewRequestModal').data('id'); // Get stored ID
-
-                if (!requestId) {
-                    console.error("No request ID found!");
-                    return;
+        // When focus is lost or Enter is pressed, save the new value
+        inputField.on('blur keypress', function (e) {
+            if (e.type === 'blur' || e.which === 13) { // 13 = Enter key
+                let newQty = $(this).val().trim();
+                if (newQty === '' || isNaN(newQty) || newQty <= 0) {
+                    newQty = currentQty; // Revert to original if invalid
                 }
 
-                // Collect items to be deducted
-                const itemsToDeduct = []; // Array to hold item data
-                $('#view_request_items tr').each(function() {
-                    const itemId = $(this).data('item_id'); 
-                    const quantity = $(this).find('.item-quantity').val(); 
-                    itemsToDeduct.push({ id: itemId, qty: quantity });
-                });
-
-                $.ajax({
-                    url: 'update_status.php',
-                    type: 'POST',
-                    data: { id: requestId, status: 1, items: itemsToDeduct }, // 1 for served
-                    success: function (response) {
-                        console.log("Status updated successfully: ", response);
-                        location.reload(); 
-                    },
-                    error: function (xhr, status, error) {
-                        console.error("Error updating status: ", error);
-                    }
-                });
-            });
-
-            // Edit quantity functionality
-            $(document).on('click', '.edit-qty-btn', function () {
-                const qtyInput = $(this).closest('tr').find('.item-quantity');
-                qtyInput.prop('readonly', false); // Make the quantity input editable
-                qtyInput.focus(); // Focus on the input for immediate editing
-            });
+                currentElement.html(newQty);
+            }
         });
-    </script>
+    });
+});
+    // Decline button functionality
+    $('.btn-danger.viewrequest-btn').on('click', function () {
+        $('#confirmDeclineModal').modal('show');
+
+        const requestId = $(this).data('id');
+
+        // Handle confirmation
+        $('#confirmDecline').off('click').on('click', function () {
+
+            $.ajax({
+                url: 'update_status.php',
+                type: 'POST',
+                data: { id: requestId, status: 2 },
+                success: function (response) {
+                    location.reload();
+                }
+            });
+            $('#confirmDeclineModal').modal('hide');
+        });
+    });
+
+    // Save button functionality (Update Status to Served)
+    $('#saveRequest').on('click', function () {
+        const requestId = $('#viewRequestModal').data('id'); // Get stored ID
+
+        if (!requestId) {
+            console.error("No request ID found!");
+            return;
+        }
+
+        // Collect items to be deducted
+        const itemsToDeduct = []; // Array to hold item data
+        $('#view_request_items tr').each(function() {
+            const itemId = $(this).data('item_id'); 
+            const quantity = $(this).find('.editable-qty').text().trim(); // Get updated quantity
+            itemsToDeduct.push({ id: itemId, qty: quantity });
+        });
+
+        $.ajax({
+            url: 'update_status.php',
+            type: 'POST',
+            data: { id: requestId, status: 1, items: itemsToDeduct }, // 1 for served
+            success: function (response) {
+                console.log("Status updated successfully: ", response);
+                location.reload(); 
+            },
+            error: function (xhr, status, error) {
+                console.error("Error updating status: ", error);
+            }
+        });
+    });
+});
+</script>
+
+
+    

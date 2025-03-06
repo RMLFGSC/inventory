@@ -203,15 +203,13 @@ $result = mysqli_query($conn, $query);
                                         </td>
 
                                         <td>
-                                            <button type="button" class="btn btn-sm btn-success"><i class="fas fa-edit"></i>
 
-                                            </button>
+                                        
                                             <button type="button" data-toggle="modal" data-target="#viewRequestModal"
                                                 class="btn btn-sm btn-warning viewrequest-btn"
                                                 data-req_number="<?php echo htmlspecialchars($row['req_number']); ?>">
                                                 <i class="fa-solid fa-eye text-white"></i>
                                             </button>
-                                            <button type="button" class="btn btn-sm btn-info"><i class="fas fa-square-check"></i>
 
                                         </td>
                                     </tr>

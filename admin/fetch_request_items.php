@@ -4,7 +4,7 @@ include("../dbconn/conn.php");
 if (isset($_POST['req_number'])) {
     $reqNO = $_POST['req_number'];
 
-    $query = "SELECT u.fullname, u.department, r.date, si.item, r.qty
+    $query = "SELECT u.fullname, u.department, r.date, si.item, r.qty, r.stockin_id, r.status 
               FROM request r 
               JOIN stock_in si ON r.stockin_id = si.stockin_id 
               JOIN users u ON r.user_id = u.user_id  
@@ -15,13 +15,13 @@ if (isset($_POST['req_number'])) {
     $result = mysqli_stmt_get_result($stmt);
 
     while ($row = mysqli_fetch_assoc($result)) {
-        echo "<tr>
+        $editableClass = ($row['status'] == 0) ? "editable-qty" : ""; // 0 = Pending
+        echo "<tr data-item_id='" . htmlspecialchars($row['stockin_id']) . "' data-status='" . htmlspecialchars($row['status']) . "'>
                 <td>" . htmlspecialchars($row['item']) . "</td>
-                <td><input type='text' class='item-quantity' value='" . htmlspecialchars($row['qty']) . "' readonly></td>
-                <td><button class='edit-qty-btn'><i class='fa-solid fa-edit'></i></button></td>
+                <td class='$editableClass'>" . htmlspecialchars($row['qty']) . "</td>
               </tr>";
     }
 
-    mysqli_stmt_close($stmt);
+    mysqli_stmt_close($stmt);       
 }
 ?>

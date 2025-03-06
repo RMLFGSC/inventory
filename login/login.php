@@ -1,5 +1,9 @@
 <?php
-$_SESSION['user_name'] = $row['fullname']
+if (isset($row) && isset($row['fullname'])) {
+    $_SESSION['user_name'] = $row['fullname'];
+} else {
+    $_SESSION['user_name'] = ''; // or handle the error as needed
+}
 ?>
 
 
@@ -24,53 +28,55 @@ $_SESSION['user_name'] = $row['fullname']
 
     <!-- Custom styles for this template-->
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="../css/custom-login.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-image: url('../img/bg-gmc.jpg');
+            background-size: cover; /* Adjusts the image to cover the entire background */
+            background-position: center; /* Centers the image */
+            background-repeat: no-repeat; /* Prevents the image from repeating */
+            min-height: 100vh; /* Ensures the body takes at least the full height of the viewport */
+            display: flex; /* Enables flexbox layout */
+            align-items: center; /* Vertically centers the content */
+            justify-content: center; /* Horizontally centers the content */
+        }
+    </style>
 
 </head>
 
-<body class="bg-gradient-primary">
+<body class="bg-light">
 
     <div class="container">
 
         <!-- Outer Row -->
         <div class="row justify-content-center">
 
-            <div class="col-xl-8 col-lg-10 col-md-8">
+            <div class="col-xl-5 col-lg-6 col-md-8">
 
-                <div class="card o-hidden border-0 shadow-lg my-5">
-                    <div class="card-body p-0">
-                        <!-- Nested Row within Card Body -->
-                        <div class="row">
-                            <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
-                            <div class="col-lg-6">
-                                <div class="p-5">
-                                    <?php
-                                    include("../includes/message.php")
-                                    ?>
-                                    <div class="text-center">
-                                        <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
-                                    </div>
-                                    <form action="logincode.php" method="POST">
-                                        <div class="form-group">
-                                            <input type="text" name="username" class="form-control form-control-user"
-                                                id="exampleInputEmail"
-                                                placeholder="Enter Username...">
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="password" name="pword" class="form-control form-control-user"
-                                                id="exampleInputPassword" placeholder="Password">
-                                        </div>
-                                       
-                                        <div class="form-group mb-3">
-                                            <button type="submit" name="login-btn" class="btn btn-primary"> Login </button>
-                                        </div>
-                                        <hr>
-                                        
-                                    </form>
-                                    
-                                    
-                                </div>
-                            </div>
+                <div class="card border-0 shadow-lg my-5">
+                    <div class="card-body p-4">
+                        <div class="text-center mb-4">
+                            <img src="../img/gmc-logo.jpg" alt="GMC Logo" class="rounded-circle" style="width: 80px; height: 80px; margin-bottom: 10px;">
+                            <h1 class="h4 text-dark">GENSANMED</h1>
                         </div>
+                        <form action="logincode.php" method="POST">
+                            <div class="form-group">
+                                <input type="text" name="username" class="form-control form-control-user" placeholder="Username" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="password" name="pword" class="form-control form-control-user" placeholder="Password" required>
+                            </div>
+
+                            <hr>
+
+                            <div class="form-group mb-3">
+                                <button type="submit" name="login-btn" class="btn btn-warning btn-block" style="background-color: #76a73c; border-color: #4e73df;">Submit</button>
+                            </div>
+                            
+                            <hr>
+                            
+                        </form>
                     </div>
                 </div>
 

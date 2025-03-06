@@ -153,6 +153,25 @@ $result = mysqli_query($conn, $query);
             </div>
         </div>
 
+        <!-- Confirmation Modal -->
+        <div class="modal fade" id="confirmPostModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Confirm Post</h5>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to finalize this request? This action cannot be undone.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="confirmPostBtn">Confirm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="container-fluid">
             <!-- Page Heading -->
             <div class="d-sm-flex align-items-center justify-content-between mb-4">
@@ -204,7 +223,12 @@ $result = mysqli_query($conn, $query);
                                                 data-req_number="<?php echo htmlspecialchars($row['req_number']); ?>">
                                                 <i class="fa-solid fa-eye text-white"></i>
                                             </button>
-
+                                            <button type="button" class="btn btn-sm btn-info editRequest" data-req_number="<?php echo htmlspecialchars($row['req_number']); ?>">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-success postRequest" data-req_number="<?php echo htmlspecialchars($row['req_number']); ?>">
+                                                <i class="fas fa-square-check"></i>
+                                            </button>
                                         </td>
                                     </tr>
                                 <?php endwhile; ?>
@@ -320,6 +344,34 @@ $result = mysqli_query($conn, $query);
                 printWindow.document.close();
                 printWindow.print();
                 printWindow.close();
+            });
+
+            // Handle post button click
+            $('.postRequest').click(function() {
+                const reqno = $(this).data('req_number'); // Get the request number
+                $('#confirmPostModal').modal('show'); // Show confirmation modal
+
+                // Confirm post action
+                $('#confirmPostBtn').off('click').on('click', function() {
+                    // AJAX request to update the is_posted status in the database
+                    $.ajax({
+                        url: 'post_request.php', // Your endpoint to update the post status
+                        type: 'POST',
+                        data: {
+                            req_number: reqno,
+                            is_posted: 1 // Set to 1 for posted
+                        },
+                        success: function(response) {
+                            // Hide edit and post buttons
+                            $('.postRequest[data-req_number="' + reqno + '"]').hide();
+                            $('.editRequest[data-req_number="' + reqno + '"]').hide();
+                            $('#confirmPostModal').modal('hide'); // Hide confirmation modal
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error updating post status: ", error);
+                        }
+                    });
+                });
             });
         });
     </script>
