@@ -52,19 +52,27 @@
                     <span>Users</span></a>
             </li>
 
+            <!-- Nav Item - Utilities Collapse Menu -->
             <li class="nav-item">
-                <a class="nav-link" href="reports.php">
-                    <i class="fas fa-fw fa-archive"></i>
-                    <span>Reports</span></a>
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#reports"
+                    aria-expanded="true" aria-controls="reports">
+                    <i class="fas fa-fw fa-boxes"></i>
+                    <span>Reports</span>
+                </a>
+                <div id="reports" class="collapse" aria-labelledby="headingUtilities"
+                    data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="stockin_report.php">Stock-in Report</a>
+                        <a class="collapse-item" href="#">Request Report</a>
+                        <a class="collapse-item" href="#">Issuance Report</a>
+                    </div>
+                </div>
             </li>
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
 
-            <!-- Sidebar Toggler (Sidebar) -->
-            <div class="text-center d-none d-md-inline">
-                <button class="rounded-circle border-0" id="sidebarToggle"></button>
-            </div>
+           
 
 
         </ul>
